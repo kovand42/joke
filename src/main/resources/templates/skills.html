@@ -4,10 +4,46 @@
 <body>
 <nav th:replace="fragments::menu"></nav>
 <ul>
-    <li th:each="skill:${skills}" th:object="${skill}">
-        <a th:href="@{/skills/{id}(id=*{skillId})}"
-           th:text="*{skillName}"></a>
+    <li th:each="category:${categoryList}" th:object="${category}">
+        <a th:href="@{/skills/categories/{id}(id=*{categoryId})}">
+            <img th:class="logoContainer"
+                 th:src="@{/images/logo/{categoryName}.png(categoryName=*{categoryName})}"
+                 th:alt="*{categoryName}">
+        </a>
     </li>
 </ul>
+<div>
+    <div th:class="${category} != null ? 'container' : 'none'" th:each="category:${activeCategorySet}" th:object="${category}">
+        <form method="get" th:action="@{/skills/categories/removeCategory/{id}(id=*{categoryId})}">
+            <input th:class="close" type="submit" th:value="x">
+            <input type="hidden" th:value="*{categoryId}" th:name="id">
+        </form>
+        <ul>
+            <li th:class="categoryList">
+                <h2 th:text="${category}"></h2>
+            </li>
+            <li th:each="skillEntry:${activeSkillMap}" th:object="${skillEntry}">
+                <ul th:class="*{value} == ${category.categoryId} ? 'skillList' : 'none'" >
+                    <li>
+                        <h3 th:text="*{key.skillName}"></h3>
+                    </li>
+                    <li>
+                        <a th:href="@{/skills/{id}(id=*{key.skillId})}">
+                            <img th:class="logoContaier"
+                                 th:src="@{/images/logo/{skillName}.png(skillName=*{key.skillName})}"
+                                 th:alt="*{key.skillName}">
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<!--<ul>
+    <li th:each="skill:${skills}" th:object="${skill}">
+        <a th:href="@{/skills/skill/{id}(id=*{skillId})}"
+           th:text="*{skillName}"></a>
+    </li>
+</ul>-->
 </body>
 </html>

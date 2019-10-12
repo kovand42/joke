@@ -2,7 +2,6 @@ package net.kovand42.kova_design.web;
 
 import net.kovand42.kova_design.entities.Application;
 import net.kovand42.kova_design.entities.User;
-import net.kovand42.kova_design.entities.UserSkill;
 import net.kovand42.kova_design.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,7 +37,6 @@ public class ApplicationController {
         });
         modelAndView.addObject("users", users);
         modelAndView.addObject("app", application);
-        System.out.println(application);
         return modelAndView;
     }
 }

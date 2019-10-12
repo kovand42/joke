@@ -13,20 +13,18 @@ import java.util.Set;
 @NamedEntityGraph(name = User.WITH_ROLES,
         attributeNodes = {@NamedAttributeNode("roles")})
 public class User implements Serializable {
-    //public interface Step1{}
-    //public interface Step2{}
     private static final long serialVersionUID = 1L;
     public static final String WITH_ROLES="User.withRoles";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotBlank//(groups = Step1.class)
+    @NotBlank
     @JoinColumn(name = "userName", unique = true)
     private String username;
-    @NotBlank//(groups = Step1.class)
+    @NotBlank
     @JoinColumn(name = "email", unique = true)
     private String email;
-    @NotBlank//(groups = Step2.class)
+    @NotBlank
     private String password;
     private boolean enabled;
     @ManyToMany(mappedBy = "users")

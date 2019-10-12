@@ -8,7 +8,6 @@ import net.kovand42.kova_design.exceptions.UserSkillNotFoundException;
 import net.kovand42.kova_design.repositories.UserSkillRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -25,26 +24,22 @@ public class JpaUserSkillService implements UserSkillService {
     }
 
     @Override
-    //@Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public List<UserSkill> findAll() {
         return userSkillRepository.findAll();
     }
 
     @Override
-    //@Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public Optional<UserSkill> findById(long userSkillId) {
         return userSkillRepository.findById(userSkillId);
     }
 
     @Override
-    //@Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public List<UserSkill> findByUser(User user) {
         return userSkillRepository
                 .findUserSkillByUserOrderByUserSkillId(user);
     }
 
     @Override
-    //@Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public List<UserSkill> findBySkill(Skill skill) {
         return userSkillRepository
                 .findUserSkillBySkillOrderByUserSkillId(skill);

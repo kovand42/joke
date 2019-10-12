@@ -1,0 +1,253 @@
+body {
+	background-image: url("/images/kovand.jpg");
+	background-repeat: no-repeat;
+	color: #edd400;
+	opacity: 0.7;
+	font-family: sans-serif;
+}
+
+nav {
+	background: #006600;
+	height: 1.8em;
+	font-size: large;
+}
+
+nav  a:hover {
+	text-decoration: none;
+}
+
+nav ul, nav ul li ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+nav>ul>li {
+	background-color: #006600;
+	float: left;
+	position: relative;
+}
+
+nav ul li a, nav ul li:hover ul {
+	display: block;
+}
+
+nav ul li ul {
+	background-color: #006600;
+	box-shadow: 5px 5px #777777;
+	display: none;
+	position: absolute;
+	width: 20em;
+	z-index: 100;
+}
+
+nav ul li:hover {
+	background-color: #00CC00;
+}
+
+nav>ul>li>a, nav ul li ul li a, nav>ul>li>form>span, #logoutbutton {
+	color: white;
+	line-height: 1.8em;
+	padding: 0 0.5em;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#logoutbutton {
+	background: none;
+	border: none;
+	display: inline;
+	margin: inherit;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	height: 1.8em;
+	font-weight: bold;
+}
+#logoutform {
+	display: inline;
+}
+
+h1 {
+	clear: inherit;
+	text-align: left;
+	color: black;
+	font-family: sans-serif;
+}
+
+h1 span {
+	clear: inherit;
+	text-align: left;
+	color: #00CC00;
+	opacity: 0.7;
+	font-family: sans-serif;
+}
+
+ul {
+	list-style: none;
+}
+
+body>ul>li {
+	display: block;
+	float: left;
+	padding-right: 0.2em;
+}
+
+ul>li>a>img {
+	width: 70px;
+	height: 64px;
+	-webkit-transition: width 2s, height 2s, -webkit-transform 2s;
+	transition: width 2s, height 2s, transform 2s;
+}
+
+ul>li>a>img:hover {
+	width: 150px;
+	height: 150px;
+	-webkit-transform: rotate(360deg) 2s;
+	-moz-transform: rotate(360deg);
+	-ms-transform: rotate(360deg);
+	-o-transform: rotate(360deg);
+	transform: rotate(360deg) 2s;
+}
+
+a.link {
+	display: block;
+	text-align: center;
+	color: white;
+}
+
+.subskill {
+	padding-top: 0.5em;
+	color: white;
+	display: block;
+}
+
+.none {
+	display: none;
+}
+
+body>div {
+	margin-top: 7em;
+	width: 90%;
+	display: block;
+}
+
+.container {
+	clear: both;
+	text-align: left;
+	border-radius: 2em;
+	width: auto;
+	float: left;
+	background-color: black;
+	opacity: 0.9;
+	display: block;
+	float: left;
+	padding-top: 1em;
+	padding-left: 4em;
+	padding-right: 4em;
+	border: 3px solid darkseagreen;
+}
+
+.container>ul>li {
+	display: block;
+	float: left;
+}
+
+h2 {
+	display: block;
+	text-align: left;
+	color: white;
+}
+
+h3 {
+	paddind: 1.5em;
+	display: inline;
+	text-align: left;
+	color: lime;
+}
+
+ul>li>img {
+	width: 70px;
+	height: 64px;
+	position: relative;
+	display: inline;
+	float: right;
+	-webkit-transition: width 2s, height 2s, -webkit-transform 2s;
+	transition: width 2s, height 2s, transform 2s;
+}
+
+ul>li>img:hover {
+	width: 150px;
+	height: 150px;
+	position: relative;
+	display: inline;
+	float: right;
+	-webkit-transform: rotate(360deg) 2s;
+	-moz-transform: rotate(360deg);
+	-ms-transform: rotate(360deg);
+	-o-transform: rotate(360deg);
+	transform: rotate(360deg) 2s;
+}
+
+.categoryList {
+	display: block;
+	padding: 1.5em;
+	float: left;
+}
+
+.close {
+	float: right;
+	margin-right: 1em;
+	padding-right: 1.1em;
+	border-radius: 1em;
+	width: 0.5em;
+	color: black;
+	background-color: white;
+}
+
+.weather {
+	text-align: center;
+	display: block;
+	float: right;
+	background-color: black;
+	opacity: 0.7;
+	width: 25%;
+	border: 3px solid darkseagreen;
+	border-radius: 2em;
+}
+
+.weather>img {
+	width: 128px;
+	height: 128px;
+	display: inline;
+	float: none;
+}
+
+.weather>h3 {
+	display: block;
+	text-align: center;
+}
+
+.datasets {
+	text-align: center;
+	display: block;
+	float: right;
+	background-color: black;
+	opacity: 0.7;
+	width: 25%;
+	border: 3px solid darkseagreen;
+	border-radius: 2em;
+}
+
+.datasets>h3 {
+	display: block;
+	text-align: center;
+}
+
+.datasets>ul>li {
+	display: block;
+	text-align: center;
+	color: lime;
+}
