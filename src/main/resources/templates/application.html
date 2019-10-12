@@ -4,7 +4,8 @@
 <body>
 <nav th:replace="fragments::menu"></nav>
 <h1 th:text="${app.applicationName}"></h1>
-<ul>
+<h3 th:text="|#{users} #{workingOn} #{application}|"></h3>
+<ul th:class="application">
     <li th:each="user:${users}" th:object="${user}">
         <a th:href="@{/profile/{id}(id=*{id})}"
            th:text="*{username}"></a>

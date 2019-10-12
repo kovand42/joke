@@ -4,7 +4,10 @@
 <body th:object="${user}">
 <nav th:replace="fragments::menu"></nav>
 <div th:class="container">
-    <ul th:class="competenties"><span th:text="#{skills}"></span>
+    <ul th:class="competenties">
+        <li>
+            <h3 th:text="#{skills}"></h3>
+        </li>
         <li th:each="skill:${skills}" th:object="${skill}">
             <a th:href="@{/skills/{id}(id=*{skillId})}">
                 <img th:class="logoContaier"
