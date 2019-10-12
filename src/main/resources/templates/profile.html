@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title=${user.username})"></head>
+<body th:object="${user}">
+<nav th:replace="fragments::menu"></nav>
+<ul><span th:text="#{skills}"></span>
+    <li th:each="skill:${skills}" th:object="${skill}">
+        <a th:href="@{/skills/{id}(id=*{skillId})}"
+           th:text="*{skillName}"></a>
+    </li>
+</ul>
+<ul><span th:text="#{applications}"></span>
+    <li th:each="app:${applications}"
+        th:object="${app}">
+        <a th:href="@{/applications/{id}(id=*{applicationId})}"
+           th:text="*{applicationName}"></a>
+    </li>
+</ul>
+<form th:action="@{/profile/addSkills}" method='get'>
+    <input type='submit' th:value="#{addSkills}">
+    <input type="hidden" th:name="id" th:value="*{id}">
+</form>
+<form th:action="@{/profile/addApplications}" method='get'>
+    <input type='submit' th:value="#{addApplications}">
+    <input type="hidden" th:name="id" th:value="*{id}">
+</form>
+</body>
+</html>

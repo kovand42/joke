@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title=#{addSkills})"></head>
+<body>
+<nav th:replace="fragments::menu"></nav>
+<ul><span th:text="#{skills}"></span>
+    <li th:each="skill:${skills}" th:object="${skill}">
+        <form th:action="@{/profile/addSkills/add}" method='post'>
+            <input type='submit' th:value="*{skillName}">
+            <input type="hidden" th:name="skillId" th:value="*{skillId}">
+            <input type="hidden" th:name="id" th:value="${user.id}">
+        </form>
+    </li>
+</ul>
+<form th:action="@{/profile/addApplications}" method='get'>
+    <input type='submit' th:value="#{addApplications}">
+    <input type="hidden" th:name="id" th:value="*{id}">
+</form>
+</body>
+</html>

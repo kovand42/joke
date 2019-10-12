@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <link rel="icon" th:href="@{/images/kova.png}" type="image/x-icon">
+    <title th:text="${title}"></title>
+    <link rel="stylesheet" th:href="@{/css/kovand.css}">
+</head>
+<body>
+<nav th:fragment="menu">
+    <ul>
+        <li><a th:href="@{/}">&#8962;</a></li>
+        <li><a th:href="@{/about}" th:text="#{about}"></a></li>
+        <li><a th:href="@{/applications}" th:text="#{applications}"></a></li>
+        <li><a th:href="@{/users}" th:text="#{users}"></a></li>
+        <li><a th:href="@{/skills}" th:text="#{skills}"></a></li>
+        <li><a th:href="@{/contact}" th:text="#{contact}"></a></li>
+        <li><a th:href='@{?locale=nl_BE}'>Nederlands</a></li>
+        <li><a th:href='@{?locale=fr_BE}'>Français</a></li>
+        <li><a th:href='@{?locale=hu}'>Magyar</a></li>
+        <li><a th:href='@{?locale=en}'>English</a></li>
+    </ul>
+</nav>
+</body>
+</html>

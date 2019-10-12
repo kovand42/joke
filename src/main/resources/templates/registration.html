@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title=#{newUser})"></head>
+<body>
+<nav th:replace="fragments::menu"></nav>
+<h1 th:text="#{newUser}"></h1>
+<form th:action='@{/login/newUser/registration}' method='post'
+      th:object="${userForm}" th:class="registratie">
+    <label><span th:text="#{username}"></span>
+        <span th:errors="*{username}"></span>
+        <input th:field="*{username}" th:type="text"  th:name='username'
+               required autofocus>
+    </label>
+    <label><span th:text="email"></span>
+        <span th:errors="*{email}"></span>
+        <input th:field="*{email}" th:type="text"  th:name='email'
+               required autofocus>
+    </label>
+    <label><span th:text="#{password}"></span>
+        <span th:errors="*{password}"></span>
+        <input th:field="*{password}" th:type="password"  th:name='password'
+               required autofocus>
+    </label>
+    <label><span th:text="#{confirmPassword}"></span>
+        <span th:errors="*{confirmPassword}"></span>
+        <span th:if="${message} != null" th:text="${message}"></span>
+        <input th:field="*{confirmPassword}" th:type="password"  th:name='confirmPassword'
+               required autofocus>
+    </label>
+    <input type='submit' value='ok'>
+</form>
+</body>
+</html>
+

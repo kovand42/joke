@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title=#{applications})"></head>
+<body>
+<nav th:replace="fragments::menu"></nav>
+<ul>
+    <li th:each="skill:${skills}" th:object="${skill}">
+        <a th:href="@{/skills/{id}(id=*{skillId})}"
+           th:text="*{skillName}"></a>
+    </li>
+</ul>
+</body>
+</html>
