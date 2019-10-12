@@ -191,6 +191,22 @@ ul>li>img:hover {
 	transform: rotate(360deg) 2s;
 }
 
+.application, .users {
+	display: grid;
+}
+
+.userApplications {
+	display: inline-block;
+}
+
+ul>li>a {
+	color: white;
+	line-height: 1.8em;
+	padding: 0 0.5em;
+	text-decoration: none;
+	font-weight: bold;
+}
+
 .categoryList {
 	display: block;
 	padding: 1.5em;
@@ -205,6 +221,22 @@ ul>li>img:hover {
 	width: 0.5em;
 	color: black;
 	background-color: white;
+}
+.userApplications>ul>li {
+	margin-top: 2em;
+}
+
+userApplication>ul>li>a {
+	display: block;
+	float: left;
+}
+.userApplications>ul>li>form {
+	display: block;
+	float: left;
+}
+userApplication>ul>li>a {
+	display: block;
+	float: left;
 }
 
 .weather {

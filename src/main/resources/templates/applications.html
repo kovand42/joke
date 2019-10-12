@@ -3,7 +3,7 @@
 <head th:replace="fragments::head(title=#{applications})"></head>
 <body>
 <nav th:replace="fragments::menu"></nav>
-<ul>
+<ul th:class="application">
     <li th:each="app:${applications}"
         th:object="${app}">
         <a th:href="@{/applications/{id}(id=*{applicationId})}"

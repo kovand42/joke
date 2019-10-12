@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title=${user.username})"></head>
+<body>
+<nav th:replace="fragments::menu"></nav>
+<h1 th:text="${user.username}"></h1>
+<h1 th:text="${app.applicationName}"></h1>
+<h1 th:text="${bazeg}"></h1>
+<form method="post" th:action="@{/profile/deleteApplication}">
+    <input th:class="remove" type="submit" th:value="|#{remove} #{application}|">
+    <input type="hidden" th:value="${app.applicationId}" th:name="applicationId">
+    <input type="hidden" th:value="${user.id}" th:name="id">
+</form>
+</body>
+</html>

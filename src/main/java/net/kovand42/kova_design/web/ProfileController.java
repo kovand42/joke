@@ -10,6 +10,7 @@ import net.kovand42.kova_design.services.UserService;
 import net.kovand42.kova_design.services.UserSkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -18,6 +19,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
 @RequestMapping("/profile")
@@ -97,6 +100,41 @@ public class ProfileController {
         });
         applicationService.update(application);
         redirect.addAttribute("id", id);
+        return new ModelAndView("redirect:/profile/addApplications");
+    }
+    @PostMapping("/removeApplication")
+    ModelAndView removeApplication(@RequestParam("applicationId") long applicationId,
+                                                @RequestParam("id") long id, RedirectAttributes redirect){
+        User user = userService.findById(id).get();
+        List<UserSkill> userSkills = userSkillService.findByUser(user);
+        Application application = applicationService.findById(applicationId).get();
+        AtomicInteger appUsers = new AtomicInteger(0);
+        application.getUserSkills().stream().forEach(userSkill -> {
+            if(!userSkill.getUser().equals(user)){
+                appUsers.getAndIncrement();
+                System.out.println(appUsers.get());
+                System.out.println(application.getApplicationName());
+            }
+        });
+        if(appUsers.get()>0){
+            applicationService.update(application);
+            redirect.addAttribute("id", id);
+            return new ModelAndView("redirect:/profile/addApplications");
+        }
+        ModelAndView modelAndView = new ModelAndView("deleteApplication");
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("app", application);
+        return modelAndView;
+    }
+    @PostMapping("/deleteApplication")
+    ModelAndView deleteApplication(@RequestParam("id") long id,
+                                   @RequestParam("applicationId") long applicationId,
+                                   RedirectAttributes redirect){
+        redirect.addAttribute("id", id);
+        System.out.println(applicationService.findAll().size());
+        Application application = applicationService.findById(applicationId).get();
+        applicationService.delete(application);
+        System.out.println(applicationService.findAll().size());
         return new ModelAndView("redirect:/profile/addApplications");
     }
     private List<Skill> makeSkillListFromUser(User user){

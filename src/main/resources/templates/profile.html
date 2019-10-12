@@ -3,26 +3,45 @@
 <head th:replace="fragments::head(title=${user.username})"></head>
 <body th:object="${user}">
 <nav th:replace="fragments::menu"></nav>
-<ul><span th:text="#{skills}"></span>
-    <li th:each="skill:${skills}" th:object="${skill}">
-        <a th:href="@{/skills/{id}(id=*{skillId})}"
-           th:text="*{skillName}"></a>
-    </li>
-</ul>
-<ul><span th:text="#{applications}"></span>
-    <li th:each="app:${applications}"
-        th:object="${app}">
-        <a th:href="@{/applications/{id}(id=*{applicationId})}"
-           th:text="*{applicationName}"></a>
-    </li>
-</ul>
-<form th:action="@{/profile/addSkills}" method='get'>
-    <input type='submit' th:value="#{addSkills}">
-    <input type="hidden" th:name="id" th:value="*{id}">
-</form>
-<form th:action="@{/profile/addApplications}" method='get'>
-    <input type='submit' th:value="#{addApplications}">
-    <input type="hidden" th:name="id" th:value="*{id}">
-</form>
+<div th:class="container">
+    <ul th:class="competenties"><span th:text="#{skills}"></span>
+        <li th:each="skill:${skills}" th:object="${skill}">
+            <a th:href="@{/skills/{id}(id=*{skillId})}">
+                <img th:class="logoContaier"
+                     th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
+                     th:alt="*{skillName}">
+            </a>
+        </li>
+    </ul>
+</div>
+<div th:class="userApplications">
+    <ul>
+        <li>
+            <h3><span th:text="#{applications}"></span></h3>
+        </li>
+        <li th:each="app:${applications}"
+            th:object="${app}">
+            <a th:class="userApp" th:href="@{/applications/{id}(id=*{applicationId})}"
+               th:text="*{applicationName}"></a>
+            <form method="post" th:action="@{/profile/removeApplication}">
+                <input th:class="remove" type="submit" th:value="#{remove}">
+                <input type="hidden" th:value="*{applicationId}" th:name="applicationId">
+                <input type="hidden" th:value="${user.id}" th:name="id">
+            </form>
+        </li>
+        <li>
+            <form th:action="@{/profile/addSkills}" method='get'>
+                <input type='submit' th:value="#{addSkills}">
+                <input type="hidden" th:name="id" th:value="*{id}">
+            </form>
+        </li>
+        <li>
+            <form th:action="@{/profile/addApplications}" method='get'>
+                <input type='submit' th:value="#{addApplications}">
+                <input type="hidden" th:name="id" th:value="*{id}">
+            </form>
+        </li>
+    </ul>
+</div>
 </body>
 </html>

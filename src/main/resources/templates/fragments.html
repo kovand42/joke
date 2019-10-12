@@ -24,12 +24,12 @@
             </ul>
         </li>
         <li sec:authorize="isAnonymous()">
-            <a th:href="@{/login}">Aanmelden</a>
+            <a th:href="@{/login}" th:text="#{login}"></a>
         </li>
         <li sec:authorize="isAuthenticated()">
             <span sec:authentication="name"></span>
             <form id="logoutform" method="post" th:action="@{/logout}">
-                <input type="submit" value="Afmelden" id="logoutbutton">
+                <input type="submit" th:value="#{logout}" id="logoutbutton">
             </form>
         </li>
     </ul>
