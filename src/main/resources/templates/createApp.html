@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title=#{createApplication})"></head>
+<body>
+<nav th:replace="fragments::menu"></nav>
+<h1>CREATE</h1>
+<div th:class="${repo} != null ? 'none' : 'container'">
+    <h3 th:text="'repo url'"></h3>
+    <form method="get" th:action="@{/applications/create/repo}">
+        <input th:class="userApplication" type="text" th:name="repoUrl">
+        <input th:class="userApplication" type="submit" th:value="ok">
+        <input type="hidden" th:value="${user.id}" th:name="id">
+    </form>
+</div>
+</body>
+</html>

@@ -117,6 +117,9 @@ public class ProfileController {
             }
         });
         if(appUsers.get()>0){
+            userSkills.forEach(userSkill -> {
+                application.remove(userSkill);
+            });
             applicationService.update(application);
             redirect.addAttribute("id", id);
             return new ModelAndView("redirect:/profile/addApplications");

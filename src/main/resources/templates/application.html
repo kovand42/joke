@@ -10,6 +10,11 @@
         <a th:href="@{/profile/{id}(id=*{id})}"
            th:text="*{username}"></a>
     </li>
+    <li>
+        <a th:href="@{/applications/newApplication}">
+            <h3 th:text="#{makeNewApp}"></h3>
+        </a>
+    </li>
 </ul>
 </body>
 </html>
