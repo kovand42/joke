@@ -37,11 +37,15 @@ public class SkillsForNewApp implements Serializable {
         }
     }
 
+    public void setClear(){
+        newSkills.clear();
+    }
+
     public int getSize(){
         return newSkills.size();
     }
 
     public Set<Long> getNewSkills () {
-        return Collections.unmodifiableSet(newSkills);
+        return newSkills;
     }
 }

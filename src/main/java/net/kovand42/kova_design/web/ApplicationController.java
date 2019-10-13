@@ -81,22 +81,21 @@ public class ApplicationController {
     }
     @GetMapping("create/repo")
     ModelAndView ceateRepo(@RequestParam("repoUrl") String url, RedirectAttributes redirect){
-        if(repositoryService.findByUrl(url).isPresent()){
-            redirect.addAttribute("repo", repositoryService.findByUrl(url).get().getRepositoryId());
-            return new ModelAndView("redirect:/applications/create");
-        }
+
         return new ModelAndView("newRepo", "repoForm", new RepositoryForm(null, null));
     }
     @PostMapping("create")
-    ModelAndView create(@RequestParam("repo")Optional<Repository> repo,
+    ModelAndView create(@RequestParam("repoUrl")String url,
+                        @RequestParam("appName")String appName,
                         RedirectAttributes redirect, Principal principal){
-        User user = userService.findByUsername(principal.getName()).get();
-        ModelAndView modelAndView = new ModelAndView("createApp").addObject("user", user);
-        if(repo.isPresent()){
-            modelAndView.addObject("appForm",new ApplicationForm(null, repo.get()));
-            return modelAndView;
+        System.out.println(url);
+        System.out.println(appName);
+        if(repositoryService.findByUrl(url).isPresent()){
+            makeAppFromUrlAndAppName(url, appName, principal);
+            return new ModelAndView("redirect:/applications");
         }
-
+        ModelAndView modelAndView = new ModelAndView("createApp")
+                .addObject("user", userService.findByUsername(principal.getName()).get());
        return modelAndView;
     }
     private List<Skill> makeSkillListFromUser(User user){
@@ -109,9 +108,11 @@ public class ApplicationController {
         });
         return skills;
     }
-    private void function(){
-        /*        Application application =
-                new Application(appForm.getApplicationName(), repo.get());
+    private void makeAppFromUrlAndAppName(String url, String appName,
+                                          Principal principal){
+        Repository repository = repositoryService.findByUrl(url).get();
+        Application application = new Application(appName, repository);
+        User user = userService.findByUsername(principal.getName()).get();
         skillsForNewApp.getNewSkills().stream().forEach(id -> {
             userSkillService.findBySkill(skillService.findById(id).get()).forEach(userSkill -> {
                 if(userSkill.getUser().equals(user)){
@@ -120,6 +121,6 @@ public class ApplicationController {
             });
         });
         applicationService.create(application);
-        skillsForNewApp.getNewSkills().clear();*/
+        skillsForNewApp.setClear();
     }
 }
