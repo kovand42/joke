@@ -64,10 +64,12 @@ public class JpaRepositoryService implements RepositoryService {
     @Override
     @Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
     public void create(Repository repository) throws RepositoryAlreadyExistsException {
-        if(!exists(repository)){
-            repositoryRepository.save(repository);
+        boolean exists = exists(repository);
+        if(exists){
+            throw new RepositoryAlreadyExistsException();
+
         }
-        throw new RepositoryAlreadyExistsException();
+        repositoryRepository.save(repository);
     }
 
     @Override

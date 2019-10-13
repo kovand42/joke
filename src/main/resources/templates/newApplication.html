@@ -35,12 +35,20 @@
         </li>
     </ul>
 </div>
-<div>
+<div th:class="container">
     <form method="post" th:action="@{/applications/create}">
-        <label th:text="'repo url'"></label>
-        <input th:class="userApplication" type="text" th:name="repoUrl">
-        <label th:text="'appName'"></label>
-        <input th:class="userApplication" type="text" th:name="appName">
+        <label th:object="${repositoryForm}">
+            <span th:text="'repo url'"></span>
+            <span th:errors="*{url}"></span>
+            <input th:field="*{url}" th:class="userApplication"
+                   type="text" th:name="repoUrl" autofocus required>
+        </label>
+        <label th:object="${applicationForm}">
+            <span th:text="'appName'"></span>
+            <span th:errors="*{applicationName}"></span>
+            <input th:field="*{applicationName}" th:class="userApplication"
+                   type="text" th:name="appName" autofocus required>
+        </label>
         <input th:class="userApplication" type="submit" th:value="#{createApplication}">
         <input type="hidden" th:value="*{skillId}" th:name="id">
     </form>

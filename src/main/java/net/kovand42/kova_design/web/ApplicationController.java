@@ -67,6 +67,7 @@ public class ApplicationController {
         modelAndView.addObject("user", user);
         modelAndView.addObject("skills", principalSkills);
         modelAndView.addObject("applicationForm", new ApplicationForm(null, null));
+        modelAndView.addObject("repositoryForm", new RepositoryForm(null, null));
         return modelAndView;
     }
     @GetMapping("newApplicationSkills")
@@ -79,23 +80,34 @@ public class ApplicationController {
         skillsForNewApp.remove(id);
         return new ModelAndView("redirect:/applications/newApplication");
     }
-    @GetMapping("create/repo")
-    ModelAndView ceateRepo(@RequestParam("repoUrl") String url, RedirectAttributes redirect){
-
-        return new ModelAndView("newRepo", "repoForm", new RepositoryForm(null, null));
+    @PostMapping("create/repo")
+    ModelAndView ceateRepo(@Valid RepositoryForm repositoryForm,
+            Errors errors, @RequestParam("appName") String appName,
+                           @RequestParam("url") String url,
+                           RedirectAttributes redirect, Principal principal){
+        ModelAndView modelAndView = new ModelAndView("createApp");
+        if(errors.hasErrors()){
+            return modelAndView;
+        }
+        Repository repository = new Repository(repositoryForm.getRepositoryName(), url);
+        repositoryService.create(repository);
+        makeAppFromUrlAndAppName(repositoryForm.getUrl(), appName, principal);
+        return new ModelAndView("redirect:/applications");
     }
     @PostMapping("create")
-    ModelAndView create(@RequestParam("repoUrl")String url,
-                        @RequestParam("appName")String appName,
+    ModelAndView create(@Valid ApplicationForm applicationForm, Errors appErrors,
+                        @Valid RepositoryForm repositoryForm, Errors repoErrors,
                         RedirectAttributes redirect, Principal principal){
-        System.out.println(url);
-        System.out.println(appName);
-        if(repositoryService.findByUrl(url).isPresent()){
-            makeAppFromUrlAndAppName(url, appName, principal);
+        System.out.println(repositoryForm.getUrl());
+        System.out.println(applicationForm.getApplicationName());
+        if(repositoryService.findByUrl(repositoryForm.getUrl()).isPresent()){
+            makeAppFromUrlAndAppName(repositoryForm.getUrl(), applicationForm.getApplicationName(), principal);
             return new ModelAndView("redirect:/applications");
         }
         ModelAndView modelAndView = new ModelAndView("createApp")
-                .addObject("user", userService.findByUsername(principal.getName()).get());
+                .addObject("url", repositoryForm.getUrl())
+                .addObject("appName", applicationForm.getApplicationName())
+                .addObject("repoForm", new RepositoryForm(null, repositoryForm.getUrl()));
        return modelAndView;
     }
     private List<Skill> makeSkillListFromUser(User user){
