@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @Transactional(readOnly=true,isolation= Isolation.READ_COMMITTED)
-public class JpaApplicationService implements ApplicationService {
+public class    JpaApplicationService implements ApplicationService {
     private final ApplicationRepository applicationRepository;
 
     public JpaApplicationService(ApplicationRepository applicationRepository) {

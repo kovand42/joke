@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ProfileController {
     @Autowired
     SkillService skillService;
     @GetMapping("/{id}")
-    ModelAndView profile(@PathVariable long id){
+    ModelAndView profile(@PathVariable long id, Principal principal){
         User user = userService.findById(id).get();
         List<Application> applications = makeAppListFromUser(user);
         List<Skill> skills = makeSkillListFromUser(user);
@@ -43,6 +44,7 @@ public class ProfileController {
                 .addObject("user", userService.findById(id).get());
         modelAndView.addObject("skills", skills);
         modelAndView.addObject("applications", applications);
+        modelAndView.addObject("principal", principal.getName());
         return modelAndView;
     }
     @GetMapping("/addSkills")
@@ -104,7 +106,7 @@ public class ProfileController {
     }
     @PostMapping("/removeApplication")
     ModelAndView removeApplication(@RequestParam("applicationId") long applicationId,
-                                                @RequestParam("id") long id, RedirectAttributes redirect){
+                                   @RequestParam("id") long id, RedirectAttributes redirect){
         User user = userService.findById(id).get();
         List<UserSkill> userSkills = userSkillService.findByUser(user);
         Application application = applicationService.findById(applicationId).get();

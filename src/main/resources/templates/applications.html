@@ -9,10 +9,10 @@
         <a th:href="@{/applications/{id}(id=*{applicationId})}"
            th:text="*{applicationName}"></a>
     </li>
-    <li>
-        <a th:href="@{/applications/newApplication}">
-            <h3 th:text="#{makeNewApp}"></h3>
-        </a>
+    <li th:class="${principal} != null ? 'registratie' : 'none'">
+        <form th:action="@{/applications/newApplication}" method='get'>
+            <input type='submit' th:value="#{makeNewApp}">
+        </form>
     </li>
 </ul>
 </body>

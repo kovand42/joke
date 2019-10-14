@@ -5,7 +5,8 @@
 <nav th:replace="fragments::menu"></nav>
 <ul th:class="users">
     <li th:each="user:${users}" th:object="${user}">
-        <a th:href="@{/profile/{id}(id=*{id})}"
+        <a th:class="*{username} != 'master' ? 'registratie' : 'none'"
+           th:href="@{/profile/{id}(id=*{id})}"
            th:text="*{username}"></a>
     </li>
 </ul>

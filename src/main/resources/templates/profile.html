@@ -24,30 +24,37 @@
         </li>
         <li th:each="app:${applications}"
             th:object="${app}">
-            <a th:class="userApp" th:href="@{/applications/{id}(id=*{applicationId})}"
-               th:text="*{applicationName}"></a>
-            <form method="post" th:action="@{/profile/removeApplication}">
-                <input th:class="remove" type="submit" th:value="#{remove}">
-                <input type="hidden" th:value="*{applicationId}" th:name="applicationId">
-                <input type="hidden" th:value="${user.id}" th:name="id">
-            </form>
+            <ul>
+                <li>
+                    <a th:class="userApp" th:href="@{/applications/{id}(id=*{applicationId})}"
+                       th:text="*{applicationName}"></a>
+                </li>
+                <li th:class="${user.username} == ${principal} ? 'registratie' : 'none'">
+                    <form method="post" th:action="@{/profile/removeApplication}"
+                          th:class="${user.username} == ${principal} ? 'registratie' : 'none'">
+                        <input th:class="remove" type="submit" th:value="#{remove}">
+                        <input type="hidden" th:value="*{applicationId}" th:name="applicationId">
+                        <input type="hidden" th:value="${user.id}" th:name="id">
+                    </form>
+                </li>
+            </ul>
         </li>
-        <li>
+        <li th:class="${user.username} == ${principal} ? 'registratie' : 'none'">
             <form th:action="@{/profile/addSkills}" method='get'>
                 <input type='submit' th:value="#{addSkills}">
                 <input type="hidden" th:name="id" th:value="*{id}">
             </form>
         </li>
-        <li>
+        <li th:class="${user.username} == ${principal} ? 'registratie' : 'none'">
             <form th:action="@{/profile/addApplications}" method='get'>
                 <input type='submit' th:value="#{addApplications}">
                 <input type="hidden" th:name="id" th:value="*{id}">
             </form>
         </li>
-        <li>
-            <a th:href="@{/applications/newApplication}">
-                <h3 th:text="#{makeNewApp}"></h3>
-            </a>
+        <li th:class="${user.username} == ${principal} ? 'registratie' : 'none'">
+            <form th:action="@{/applications/newApplication}" method='get'>
+                <input type='submit' th:value="#{makeNewApp}">
+            </form>
         </li>
     </ul>
 </div>

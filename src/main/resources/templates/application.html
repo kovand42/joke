@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<li lang="nl" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments::head(title=${app.applicationName})"></head>
 <body>
 <nav th:replace="fragments::menu"></nav>
@@ -7,14 +7,51 @@
 <h3 th:text="|#{users} #{workingOn}|"></h3>
 <ul th:class="application">
     <li th:each="user:${users}" th:object="${user}">
-        <a th:href="@{/profile/{id}(id=*{id})}"
+        <a th:class="*{username} != 'master' ? 'registratie' : 'none'"
+           th:href="@{/profile/{id}(id=*{id})}"
            th:text="*{username}"></a>
     </li>
-    <li>
-        <a th:href="@{/applications/newApplication}">
-            <h3 th:text="#{makeNewApp}"></h3>
-        </a>
-    </li>
 </ul>
+<div th:class="container">
+    <ul th:class="competenties">
+        <li>
+            <h3 th:text="#{lackingSkills}"></h3>
+        </li>
+        <li th:each="skill:${lackingSkills}" th:object="${skill}">
+            <img th:class="logoContaier"
+                th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
+                th:alt="*{skillName}">
+            <form th:class="${cont} ? 'registratie':'none'"
+                  method="get" th:action="@{/applications/ApplicationSkills}">
+                <input th:class="userApplication" type="submit" th:value="#{add}">
+                <input type="hidden" th:value="*{skillId}" th:name="id">
+                <input type="hidden" th:value="${app.applicationId}" th:name="appId">
+            </form>
+        </li>
+    </ul>
+</div>
+<div th:class="container">
+    <ul th:class="competenties">
+        <li>
+            <h3 th:text="#{appSkills}"></h3>
+        </li>
+        <li>
+            <img th:class="logoContaier"
+                 th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
+                 th:alt="*{skillName}">
+            <form th:class="${cont} ? 'registratie':'none'"
+                  method="get" th:action="@{/applications/ApplicationSkills/remove}">
+                <input th:class="userApplication" type="submit" th:value="#{remove}">
+                <input type="hidden" th:value="*{skillId}" th:name="id">
+                <input type="hidden" th:value="${app.applicationId}" th:name="appId">
+            </form>
+        </li>
+        <li th:class="${principal} != null ? 'registratie' : 'none'">
+            <form th:action="@{/applications/newApplication}" method='get'>
+                <input type='submit' th:value="#{makeNewApp}">
+            </form>
+        </li>
+    </ul>
+</div>
 </body>
 </html>

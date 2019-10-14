@@ -63,6 +63,7 @@ CREATE TABLE users (
                        );
 
 INSERT INTO users(username,email,password) VALUES
+('master', 'm@m', '{bcrypt}$2a$10$3DPuiwzO.I2UYggelBe8NuCHdd7Jblz2cu8K0ZkkguQZYnCIA4u5O'),
 ('kovand42','kovand42@gmail.com','{bcrypt}$2a$10$3DPuiwzO.I2UYggelBe8NuCHdd7Jblz2cu8K0ZkkguQZYnCIA4u5O'),
 ('joe','andras.kovacs@vdabcampus.be','{bcrypt}$2a$10$3DPuiwzO.I2UYggelBe8NuCHdd7Jblz2cu8K0ZkkguQZYnCIA4u5O');
 
@@ -76,7 +77,10 @@ CREATE TABLE userskills (
                             CONSTRAINT userskills_skillId FOREIGN KEY (skillId) REFERENCES skills(skillId)
                             );
 
-insert into userskills(userId, skillId) values (1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(2,1);
+insert into userskills(userId, skillId) values
+(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),(1,19),(1,20),(1,21),(1,22),(1,23);
+insert into userskills(userId, skillId) values
+(2,1),(2,2),(2,3),(2,4),(2,5),(2,6),(2,7),(2,8),(2,9),(2,10),(2,11),(3,1);
 
 CREATE TABLE repositories (
                             repositoryId int unsigned NOT NULL AUTO_INCREMENT primary key,

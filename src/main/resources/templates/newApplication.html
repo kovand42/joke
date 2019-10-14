@@ -22,6 +22,22 @@
 <div th:class="container">
     <ul th:class="competenties">
         <li>
+            <h3 th:text="#{lackingSkills}"></h3>
+        </li>
+        <li th:each="skill:${lackingSkills}" th:object="${skill}">
+            <img th:class="logoContaier"
+                 th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
+                 th:alt="*{skillName}">
+            <form method="get" th:action="@{/applications/newApplicationSkills}">
+                <input th:class="userApplication" type="submit" th:value="#{add}">
+                <input type="hidden" th:value="*{skillId}" th:name="id">
+            </form>
+        </li>
+    </ul>
+</div>
+<div th:class="container">
+    <ul th:class="competenties">
+        <li>
             <h3 th:text="#{appSkills}"></h3>
         </li>
         <li th:each="skill:${skillsInUse}" th:object="${skill}">
