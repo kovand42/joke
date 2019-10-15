@@ -35,7 +35,7 @@
         <li>
             <h3 th:text="#{appSkills}"></h3>
         </li>
-        <li>
+        <li th:each="skill:${appSkills}" th:object="${skill}">
             <img th:class="logoContaier"
                  th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
                  th:alt="*{skillName}">
