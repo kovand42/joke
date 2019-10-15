@@ -15,7 +15,7 @@
 <div th:class="container">
     <ul th:class="competenties">
         <li>
-            <h3 th:text="#{lackingSkills}"></h3>
+            <h3 th:text="#{skills}"></h3>
         </li>
         <li th:each="skill:${lackingSkills}" th:object="${skill}">
             <img th:class="logoContaier"
@@ -46,12 +46,42 @@
                 <input type="hidden" th:value="${app.applicationId}" th:name="appId">
             </form>
         </li>
-        <li th:class="${principal} != null ? 'registratie' : 'none'">
+<!--        <li th:class="${principal} != null ? 'registratie' : 'none'">
             <form th:action="@{/applications/newApplication}" method='get'>
                 <input type='submit' th:value="#{makeNewApp}">
             </form>
+        </li>-->
+    </ul>
+</div>
+<div th:class="container">
+    <ul th:class="competenties">
+        <li>
+            <h3 th:text="#{lackingSkills}"></h3>
+        </li>
+        <li th:each="skill:${lackingUserSkills}" th:object="${skill}">
+            <img th:class="logoContaier"
+                 th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
+                 th:alt="*{skillName}">
         </li>
     </ul>
+</div>
+<div th:class="container">
+
+    <ul th:class="application">
+        <li>
+            <h3 th:text="#{lackingUsers}"></h3>
+        </li>
+        <li th:each="user:${usersWithLackingAppSkill}" th:object="${user}">
+            <a th:class="*{username} != 'master' ? 'registratie' : 'none'"
+               th:href="@{/profile/{id}(id=*{id})}"
+               th:text="*{username}"></a>
+        </li>
+    </ul>
+</div>
+<div th:class="${principal} != null ? 'registratie' : 'none'">
+    <form th:action="@{/applications/newApplication}" method='get'>
+        <input type='submit' th:value="#{makeNewApp}">
+    </form>
 </div>
 </body>
 </html>

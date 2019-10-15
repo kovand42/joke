@@ -5,7 +5,6 @@ import net.kovand42.kova_design.forms.ApplicationForm;
 import net.kovand42.kova_design.forms.RepositoryForm;
 import net.kovand42.kova_design.services.*;
 import net.kovand42.kova_design.sessions.AppSkills;
-import net.kovand42.kova_design.sessions.Open;
 import net.kovand42.kova_design.sessions.SkillsForNewApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +15,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Controller
 @RequestMapping("/applications")
@@ -61,6 +59,8 @@ public class ApplicationController {
         modelAndView.addObject("principal", principal);
         modelAndView.addObject("users", users);
         modelAndView.addObject("app", application);
+        modelAndView.addObject("lackingUserSkills", lackingUserSkills(application));
+        modelAndView.addObject("usersWithLackingAppSkill", makeLackingSkillsUserList(application));
         return modelAndView;
     }
     @GetMapping("newApplication")
@@ -127,8 +127,6 @@ public class ApplicationController {
     ModelAndView create(@Valid ApplicationForm applicationForm, Errors appErrors,
                         @Valid RepositoryForm repositoryForm, Errors repoErrors,
                         RedirectAttributes redirect, Principal principal){
-        System.out.println(repositoryForm.getUrl());
-        System.out.println(applicationForm.getApplicationName());
         if(repositoryService.findByUrl(repositoryForm.getUrl()).isPresent()){
             makeAppFromUrlAndAppName(repositoryForm.getUrl(), applicationForm.getApplicationName(), principal);
             return new ModelAndView("redirect:/applications");
@@ -174,6 +172,16 @@ public class ApplicationController {
         List<Skill> masterSkills = makeMasterSkills();
         List<Skill> appSkills = makeAppSkills(application);
         masterSkills.removeAll(appSkills);
+        return masterSkills;
+    }
+    private List<Skill> lackingUserSkills(Application application){
+        List<Skill> masterSkills = makeAppSkills(application);
+        List<User> users = makeAppUserList(application);
+        users.forEach(user -> {
+            if(!(user.getUsername().equals("master"))){
+                masterSkills.removeAll(makeSkillListFromUser(user));
+            }
+        });
         return masterSkills;
     }
     private List<Skill> makeMasterSkills(){
@@ -226,5 +234,24 @@ public class ApplicationController {
             }
         });
         return users;
+    }
+    private List<User> makeLackingSkillsUserList(Application application){
+        List<User> users = userService.findAll();
+        List<User> lackingUsers = new LinkedList<>();
+        users.remove(userService.findByUsername("master").get());
+        List<Skill> lackingSkills = lackingUserSkills(application);
+        users.forEach(user -> {
+            List<Skill> userSkills = makeSkillListFromUser(user);
+            AtomicBoolean need = new AtomicBoolean(false);
+            userSkills.forEach(userSkill -> {
+                if(lackingSkills.contains(userSkill)){
+                    need.set(true);
+                }
+            });
+            if((need.get())&&!(makeAppUserList(application).contains(user))){
+                lackingUsers.add(user);
+            }
+        });
+        return lackingUsers;
     }
 }
