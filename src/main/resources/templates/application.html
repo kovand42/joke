@@ -54,9 +54,11 @@
             <h3 th:text="#{lackingSkills}"></h3>
         </li>
         <li th:each="skill:${lackingUserSkills}" th:object="${skill}">
-            <img th:class="logoContaier"
-                 th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
-                 th:alt="*{skillName}">
+            <a th:href="@{/skills/{id}(id=*{skillId})}">
+                <img th:class="logoContaier"
+                    th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
+                    th:alt="*{skillName}">
+            </a>
         </li>
     </ul>
 </div>
