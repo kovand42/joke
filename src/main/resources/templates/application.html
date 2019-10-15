@@ -21,7 +21,7 @@
             <img th:class="logoContaier"
                 th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
                 th:alt="*{skillName}">
-            <form th:class="${cont} ? 'registratie':'none'"
+            <form th:class="${cont} ? 'button':'none'"
                   method="get" th:action="@{/applications/ApplicationSkills}">
                 <input th:class="userApplication" type="submit" th:value="#{add}">
                 <input type="hidden" th:value="*{skillId}" th:name="id">
@@ -39,18 +39,13 @@
             <img th:class="logoContaier"
                  th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
                  th:alt="*{skillName}">
-            <form th:class="${cont} ? 'registratie':'none'"
+            <form th:class="${cont} ? 'button':'none'"
                   method="get" th:action="@{/applications/ApplicationSkills/remove}">
                 <input th:class="userApplication" type="submit" th:value="#{remove}">
                 <input type="hidden" th:value="*{skillId}" th:name="id">
                 <input type="hidden" th:value="${app.applicationId}" th:name="appId">
             </form>
         </li>
-<!--        <li th:class="${principal} != null ? 'registratie' : 'none'">
-            <form th:action="@{/applications/newApplication}" method='get'>
-                <input type='submit' th:value="#{makeNewApp}">
-            </form>
-        </li>-->
     </ul>
 </div>
 <div th:class="container">
@@ -66,7 +61,6 @@
     </ul>
 </div>
 <div th:class="container">
-
     <ul th:class="application">
         <li>
             <h3 th:text="#{lackingUsers}"></h3>
@@ -78,8 +72,9 @@
         </li>
     </ul>
 </div>
-<div th:class="${principal} != null ? 'registratie' : 'none'">
-    <form th:action="@{/applications/newApplication}" method='get'>
+<div th:class="${principal} != null ? 'container' : 'none'">
+    <form th:action="@{/applications/newApplication}"
+          th:class="button" method='get'>
         <input type='submit' th:value="#{makeNewApp}">
     </form>
 </div>

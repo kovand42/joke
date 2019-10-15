@@ -10,7 +10,7 @@
            th:text="*{applicationName}"></a>
     </li>
     <li th:class="${principal} != null ? 'registratie' : 'none'">
-        <form th:action="@{/applications/newApplication}" method='get'>
+        <form th:class="button" th:action="@{/applications/newApplication}" method='get'>
             <input type='submit' th:value="#{makeNewApp}">
         </form>
     </li>

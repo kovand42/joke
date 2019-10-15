@@ -40,19 +40,19 @@
             </ul>
         </li>
         <li th:class="${user.username} == ${principal} ? 'registratie' : 'none'">
-            <form th:action="@{/profile/addSkills}" method='get'>
+            <form th:class="button" th:action="@{/profile/addSkills}" method='get'>
                 <input type='submit' th:value="#{addSkills}">
                 <input type="hidden" th:name="id" th:value="*{id}">
             </form>
         </li>
         <li th:class="${user.username} == ${principal} ? 'registratie' : 'none'">
-            <form th:action="@{/profile/addApplications}" method='get'>
+            <form th:class="button" th:action="@{/profile/addApplications}" method='get'>
                 <input type='submit' th:value="#{addApplications}">
                 <input type="hidden" th:name="id" th:value="*{id}">
             </form>
         </li>
         <li th:class="${user.username} == ${principal} ? 'registratie' : 'none'">
-            <form th:action="@{/applications/newApplication}" method='get'>
+            <form th:class="button" th:action="@{/applications/newApplication}" method='get'>
                 <input type='submit' th:value="#{makeNewApp}">
             </form>
         </li>

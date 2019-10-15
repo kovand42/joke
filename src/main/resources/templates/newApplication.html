@@ -12,7 +12,7 @@
             <img th:class="logoContaier"
                  th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
                  th:alt="*{skillName}">
-            <form method="get" th:action="@{/applications/newApplicationSkills}">
+            <form method="get" th:class="button" th:action="@{/applications/newApplicationSkills}">
                    <input th:class="userApplication" type="submit" th:value="#{add}">
             <input type="hidden" th:value="*{skillId}" th:name="id">
             </form>
@@ -28,7 +28,7 @@
             <img th:class="logoContaier"
                  th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
                  th:alt="*{skillName}">
-            <form method="get" th:action="@{/applications/newApplicationSkills}">
+            <form method="get" th:class="button" th:action="@{/applications/newApplicationSkills}">
                 <input th:class="userApplication" type="submit" th:value="#{add}">
                 <input type="hidden" th:value="*{skillId}" th:name="id">
             </form>
@@ -44,7 +44,7 @@
             <img th:class="logoContaier"
                  th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
                  th:alt="*{skillName}">
-            <form method="get" th:action="@{/applications/newApplicationSkills/remove}">
+            <form method="get" th:class="button" th:action="@{/applications/newApplicationSkills/remove}">
                 <input th:class="userApplication" type="submit" th:value="#{remove}">
                 <input type="hidden" th:value="*{skillId}" th:name="id">
             </form>

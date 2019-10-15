@@ -226,7 +226,7 @@ ul>li>a {
 	margin-top: 2em;
 }
 
-userApplication>ul>li>a {
+.userApplication>ul>li>a {
 	display: block;
 	float: left;
 }
@@ -238,7 +238,10 @@ userApplication>ul>li>a {
 	display: block;
 	float: left;
 }
-
+.button {
+	margin-bottom: 1em;
+	margin-bottom: 1em;
+}
 .weather {
 	text-align: center;
 	display: block;
