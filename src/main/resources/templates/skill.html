@@ -12,5 +12,17 @@
            th:text="*{applicationName}"></a>
     </li>
 </ul>
+<div th:class="container">
+    <ul th:class="application">
+        <li>
+            <h3 th:text="|#{users} :: #{skill} ${skill.skillName}"|></h3>
+        </li>
+        <li th:each="user:${users}" th:object="${user}">
+            <a th:class="*{username} != 'master' ? 'registratie' : 'none'"
+               th:href="@{/profile/{id}(id=*{id})}"
+               th:text="*{username}"></a>
+        </li>
+    </ul>
+</div>
 </body>
 </html>

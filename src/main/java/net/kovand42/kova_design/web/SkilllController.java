@@ -61,20 +61,22 @@ public class SkilllController {
         List<UserSkill> userSkills = userSkillService.findBySkill(skill);
         modelAndView.addObject("skill", skill);
         modelAndView.addObject("applications",makeApplicationSet(userSkills));
+        modelAndView.addObject("users", makeUserSet(skill));
         return modelAndView;
     }
 
-    public static Set<User> makeUserSet(List<UserSkill> userSkills){
+    private Set<User> makeUserSet(Skill skill){
         Set<User> users = new LinkedHashSet<>();
+        List<UserSkill> userSkills = userSkillService.findBySkill(skill);
         userSkills.forEach(userSkill -> {
-            if(!users.contains(userSkill.getUser())){
+            if (!users.contains(userSkill.getUser())){
                 users.add(userSkill.getUser());
             }
         });
         return users;
     }
 
-    public static Set<Application> makeApplicationSet(List<UserSkill> userSkills){
+    private Set<Application> makeApplicationSet(List<UserSkill> userSkills){
         Set<Application> applications = new LinkedHashSet<>();
         userSkills.forEach(userSkill -> {
             userSkill.getApplications().stream().forEach(application -> {
