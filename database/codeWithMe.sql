@@ -1,6 +1,6 @@
 set names utf8mb4;
 set charset utf8mb4;
-drop database if exists kova_design;
+drop database if exists codeWithMe;
 create database codeWithMe charset utf8mb4;
 use codeWithMe;
 

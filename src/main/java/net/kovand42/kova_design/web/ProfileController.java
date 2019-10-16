@@ -110,7 +110,8 @@ public class ProfileController {
         Project project = projectService.findById(projectId).get();
         AtomicInteger projectUsers = new AtomicInteger(0);
         project.getUserSkills().stream().forEach(userSkill -> {
-            if(!userSkill.getUser().equals(user)){
+            if(!(userSkill.getUser().equals(user))
+                    &&!(userSkill.getUser().getUsername().equals("master"))){
                 projectUsers.getAndIncrement();
                 System.out.println(projectUsers.get());
                 System.out.println(project.getProjectName());
@@ -136,7 +137,9 @@ public class ProfileController {
         redirect.addAttribute("id", id);
         Project project = projectService.findById(projectId).get();
         projectService.delete(project);
-        return new ModelAndView("redirect:/profile/addProject");
+        StringBuilder strb = new StringBuilder();
+        strb.append("redirect:/profile/").append(id);
+        return new ModelAndView(strb.toString());
     }
     private List<Skill> makeSkillListFromUser(User user){
         List<UserSkill> userSkills = userSkillService.findByUser(user);
