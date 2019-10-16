@@ -115,7 +115,8 @@ Create TABLE projectMessages (
                                 CONSTRAINT projectMessages_projectId FOREIGN KEY (projectId) REFERENCES projects(projectId),
                                 CONSTRAINT projectMessages_userId FOREIGN KEY (userId) REFERENCES users(id)
 );
-
+insert into projectMessages (projectId, userId, messageDateTime, message)
+values(1,2,'2019-10-16 13:32:03','ez a projekt elindult'),(1,2,'2019-10-16 13:57:24','megy is gyorsan'),(1,3,'2019-10-16 13:59:14','csuhajja de jo is ez'),(1,3,'2019-10-16 14:40:01','ilyen lett'); 
 CREATE TABLE userprojects (
                                   userSkillId int unsigned NOT NULL,
                                   projectId int unsigned NOT NULL,
