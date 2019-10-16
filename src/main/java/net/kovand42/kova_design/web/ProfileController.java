@@ -26,6 +26,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SessionAttributes("user")
 public class ProfileController {
     @Autowired
+    ControllerFunctions controllerFunctions;
+    @Autowired
     UserService userService;
     @Autowired
     UserSkillService userSkillService;
@@ -36,8 +38,8 @@ public class ProfileController {
     @GetMapping("/{id}")
     ModelAndView profile(@PathVariable long id, Principal principal){
         User user = userService.findById(id).get();
-        List<Project> projects = makeProjectListFromUser(user);
-        List<Skill> skills = makeSkillListFromUser(user);
+        List<Project> projects = controllerFunctions.makeProjectListFromUser(user);
+        List<Skill> skills = controllerFunctions.makeSkillListFromUserForProfile(user);
         ModelAndView modelAndView = new ModelAndView("profile")
                 .addObject("user", userService.findById(id).get());
         modelAndView.addObject("skills", skills);
@@ -51,7 +53,7 @@ public class ProfileController {
         List<Skill> skills1 = skillService.findAll();
         List<Skill> skills = new LinkedList<>();
         User user = userService.findById(id).get();
-        List<Skill> skillsFromUser = makeSkillListFromUser(user);
+        List<Skill> skillsFromUser = controllerFunctions.makeSkillListFromUserForProfile(user);
         skills1.forEach(skill1 -> {
             if(!skillsFromUser.contains(skill1)){
                 skills.add(skill1);
@@ -64,7 +66,7 @@ public class ProfileController {
     ModelAndView addProjects(@RequestParam("id") long id){
         ModelAndView modelAndView = new ModelAndView("addProjects");
         User user = userService.findById(id).get();
-        List<Project> newProjects = makeNewProjectListForUser(user);
+        List<Project> newProjects = controllerFunctions.makeNewProjectListForUser(user);
         modelAndView.addObject("user", user).addObject("id", id);
         return modelAndView.addObject("projects", newProjects);
     }
@@ -140,42 +142,5 @@ public class ProfileController {
         StringBuilder strb = new StringBuilder();
         strb.append("redirect:/profile/").append(id);
         return new ModelAndView(strb.toString());
-    }
-    private List<Skill> makeSkillListFromUser(User user){
-        List<UserSkill> userSkills = userSkillService.findByUser(user);
-        List<Skill> skills = new LinkedList<>();
-        userSkills.forEach(userSkill -> {
-            skills.add(userSkill.getSkill());
-        });
-        return skills;
-    }
-    private List<Project> makeProjectListFromUser(User user){
-        List<UserSkill> userSkills = userSkillService.findByUser(user);
-        List<Project> projects = new LinkedList<>();
-        userSkills.forEach(userSkill -> {
-            userSkill.getProjects().stream().forEach(project -> {
-                if(!projects.contains(project)) {
-                    projects.add(project);
-                }
-            });
-        });
-        return projects;
-    }
-    private List<Project> makeNewProjectListForUser(User user){
-        List<Project> userProjects = makeProjectListFromUser(user);
-        List<Project> projects = projectService.findAll();
-        List<Project> newProjectList = new LinkedList<>();
-        List<Skill> userSkills = makeSkillListFromUser(user);
-        projects.removeAll(userProjects);
-        projects.forEach(application -> {
-            application.getUserSkills().stream().forEach(userSkill -> {
-                if(userSkills.contains(userSkill.getSkill())
-                &&!newProjectList.contains(application)
-                &&!userProjects.contains(application)){
-                    newProjectList.add(application);
-                }
-            });
-        });
-        return newProjectList;
     }
 }

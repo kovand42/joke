@@ -22,7 +22,7 @@
                 th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
                 th:alt="*{skillName}">
             <form th:class="${cont} ? 'button':'none'"
-                  method="get" th:action="@{/projects/ProjectSkills}">
+                  method="get" th:action="@{/projects/projectSkills}">
                 <input th:class="userProject" type="submit" th:value="#{add}">
                 <input type="hidden" th:value="*{skillId}" th:name="id">
                 <input type="hidden" th:value="${project.projectId}" th:name="projectId">
@@ -40,10 +40,10 @@
                  th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
                  th:alt="*{skillName}">
             <form th:class="${cont} ? 'button':'none'"
-                  method="get" th:action="@{/projects/ProjectSkills/remove}">
+                  method="get" th:action="@{/projects/projectSkills/remove}">
                 <input th:class="userProject" type="submit" th:value="#{remove}">
                 <input type="hidden" th:value="*{skillId}" th:name="id">
-                <input type="hidden" th:value="${project.projectId}" th:name="appId">
+                <input type="hidden" th:value="${project.projectId}" th:name="projectId">
             </form>
         </li>
     </ul>
@@ -59,6 +59,12 @@
                     th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
                     th:alt="*{skillName}">
             </a>
+            <form th:class="${cont} ? 'button':'none'"
+                  method="get" th:action="@{/projects/projectSkills/remove}">
+                <input th:class="userProject" type="submit" th:value="#{remove}">
+                <input type="hidden" th:value="*{skillId}" th:name="id">
+                <input type="hidden" th:value="${project.projectId}" th:name="projectId">
+            </form>
         </li>
     </ul>
 </div>
