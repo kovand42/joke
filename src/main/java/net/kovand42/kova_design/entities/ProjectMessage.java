@@ -5,6 +5,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Entity
@@ -22,7 +23,7 @@ public class ProjectMessage implements Serializable {
     @JoinColumn(name = "projectId")
     @NotNull
     private Project project;
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne
     @JoinColumn(name = "userId")
     @NotNull
     private User user;
@@ -53,6 +54,12 @@ public class ProjectMessage implements Serializable {
 
     public User getUser() {
         return user;
+    }
+
+    public String getMessageDateTimeString() {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String dateTime = messageDateTime.format(dateTimeFormatter);
+        return dateTime;
     }
 
     public LocalDateTime getMessageDateTime() {

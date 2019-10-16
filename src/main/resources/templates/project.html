@@ -87,13 +87,14 @@
     </form>
 </div>
 <div th:class="forum">
+    <span th:class="container">
     <ul>
         <li th:each="message:${messagesMap}" th:object="${message}">
             <ul th:class="container">
                 <li>
                     <h5 th:text="*{value.username}">
                 <li>
-                    <h5 th:text="*{key.messageDateTime}"></h5>
+                    <h5 th:text="*{key.messageDateTimeString}"></h5>
                 </li>
                 <li>
                     <h3 th:text="*{key.message}"></h3>
@@ -116,6 +117,7 @@
             </form>
         </li>
     </ul>
+        </span>
 </div>
 </body>
 </html>

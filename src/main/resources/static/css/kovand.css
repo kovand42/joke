@@ -139,6 +139,7 @@ body>div {
 	text-align: left;
 	border-radius: 2em;
 	width: auto;
+	max-width: 49%;
 	float: left;
 	background-color: black;
 	opacity: 0.9;
@@ -243,9 +244,12 @@ ul>li>a {
 	margin-bottom: 1em;
 	margin-bottom: 1em;
 }
-.forum{
+.forum {
+	max-width: 49%;
 	position: relative;
 	float: right;
+	max-height: 75%;
+	scroll-padding-right: auto;
 }
 .forum>ul{
 	list-style: none;
