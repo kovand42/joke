@@ -106,11 +106,12 @@ insert into projects (projectName, repositoryId) values ('project1_1',(select re
                                                                 ('project2_2',(select repositoryId from repositories where url = 'www.application2.be'));
 
 Create TABLE projectMessages (
-                                projectMessagesId int unsigned NOT NULL AUTO_INCREMENT primary key,
+                                projectMessageId int unsigned NOT NULL AUTO_INCREMENT primary key,
                                 projectId int unsigned NOT NULL,
                                 userId int unsigned NOT NULL,
                                 messageDateTime datetime NOT NULL,
                                 message varchar(255) NOT NULL,
+                                version int unsigned DEFAULT 0,
                                 CONSTRAINT projectMessages_projectId FOREIGN KEY (projectId) REFERENCES projects(projectId),
                                 CONSTRAINT projectMessages_userId FOREIGN KEY (userId) REFERENCES users(id)
 );

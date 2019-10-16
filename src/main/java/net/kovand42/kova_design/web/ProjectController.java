@@ -2,6 +2,7 @@ package net.kovand42.kova_design.web;
 
 import net.kovand42.kova_design.entities.*;
 import net.kovand42.kova_design.forms.ProjectForm;
+import net.kovand42.kova_design.forms.ProjectMessageForm;
 import net.kovand42.kova_design.forms.RepositoryForm;
 import net.kovand42.kova_design.services.*;
 import net.kovand42.kova_design.sessions.ProjectSkills;
@@ -15,8 +16,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Controller
@@ -38,6 +42,8 @@ public class ProjectController {
     ProjectSkills projectSkills;
     @Autowired
     RepositoryService repositoryService;
+    @Autowired
+    ProjectMessageService projectMessageService;
     @GetMapping
     ModelAndView projects(Principal principal){
         projectSkills.setClear();
@@ -54,6 +60,15 @@ public class ProjectController {
         List<User> users = controllerFunctions.makeProjectUserList(project);
         User user = userService.findByUsername(principal.getName()).get();
         boolean cont = users.contains(user);
+        List<ProjectMessage> messages = projectMessageService.findByProject(project);
+        Map<ProjectMessage, User> messagesMap = new LinkedHashMap<>();
+        messages.forEach(message -> {
+            messagesMap.put(message, message.getUser());
+        });
+        modelAndView.addObject("messageForm",
+                new ProjectMessageForm(project, userService.findByUsername(principal.getName()).get(), null));
+        modelAndView.addObject("messagesMap", messagesMap);
+        modelAndView.addObject("messages", messages);
         modelAndView.addObject("cont", cont);
         modelAndView.addObject("projectSkills", localProjectSkills);
         modelAndView.addObject("lackingSkills", controllerFunctions.lackingProjectSkills(project));
@@ -139,5 +154,26 @@ public class ProjectController {
                 .addObject("projectName", projectForm.getProjectName())
                 .addObject("repoForm", new RepositoryForm(null, repositoryForm.getUrl()));
        return modelAndView;
+    }
+    @PostMapping("postMessage")
+    ModelAndView postMessage(@Valid ProjectMessageForm projectMessageForm, Errors errors,
+                             @RequestParam("id") long id,
+                             @RequestParam("projectId") long projectId,
+                             RedirectAttributes redirect){
+        StringBuilder strB = new StringBuilder();
+        strB.append("redirect:/projects/").append(projectId);
+        if(errors.hasErrors()){
+            errors.getFieldErrors().forEach(fieldError -> System.out.println(fieldError.toString()));
+            return new ModelAndView(strB.toString());
+        }
+        User user = userService.findById(id).get();
+        Project project = projectService.findById(projectId).get();
+        String message = projectMessageForm.getMessage();
+        LocalDateTime dateTime = LocalDateTime.now();
+        System.out.println(user.getUsername() + ", " + project.getProjectName() + ", " +
+                dateTime.toString() + ", " + message);
+        ProjectMessage projectMessage = new ProjectMessage(project, user, dateTime, message);
+        projectMessageService.create(projectMessage);
+        return new ModelAndView(strB.toString());
     }
 }
