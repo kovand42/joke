@@ -11,13 +11,13 @@ import java.util.Optional;
 
 public interface UserSkillRepository extends JpaRepository<UserSkill, Long> {
 
-    @EntityGraph(UserSkill.WITH_APPLICATIONS)
+    @EntityGraph(UserSkill.WITH_PROJECTS)
     Optional<UserSkill> findById(long id);
     @Override
-    @EntityGraph(UserSkill.WITH_APPLICATIONS)
+    @EntityGraph(UserSkill.WITH_PROJECTS)
     List<UserSkill> findAll();
-    @EntityGraph(UserSkill.WITH_APPLICATIONS)
+    @EntityGraph(UserSkill.WITH_PROJECTS)
     List<UserSkill> findUserSkillByUserOrderByUserSkillId(User user);
-    @EntityGraph(UserSkill.WITH_APPLICATIONS)
+    @EntityGraph(UserSkill.WITH_PROJECTS)
     List<UserSkill> findUserSkillBySkillOrderByUserSkillId(Skill skill);
 }

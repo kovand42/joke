@@ -1,10 +1,10 @@
 package net.kovand42.kova_design.services;
 
-import net.kovand42.kova_design.entities.Application;
+import net.kovand42.kova_design.entities.Project;
 import net.kovand42.kova_design.entities.Repository;
-import net.kovand42.kova_design.exceptions.ApplicationAlreadyExistsException;
+import net.kovand42.kova_design.exceptions.ProjectAlreadyExistsException;
 import net.kovand42.kova_design.exceptions.RepositoryAlreadyExistsException;
-import net.kovand42.kova_design.exceptions.RepositoryHasStillApplicationException;
+import net.kovand42.kova_design.exceptions.RepositoryHasStillProjectException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,55 +18,55 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Sql("/repositories.sql")
-@Sql("/applications.sql")
-public class RepositoryAndApplicationIntegrationTest
+@Sql("/projects.sql")
+public class RepositoryAndProjectIntegrationTest
         extends AbstractTransactionalJUnit4SpringContextTests {
     @Autowired
     RepositoryService repositoryService;
     @Autowired
-    ApplicationService applicationService;
+    ProjectService projectService;
 
     @Test(expected = RepositoryAlreadyExistsException.class)
     public void urlHasToBeUnique(){
         Repository repository = new Repository("test10", "test1url");
         repositoryService.create(repository);
     }
-    @Test(expected = RepositoryHasStillApplicationException.class)
-    public void canNotDeleteRepositoryUsedByApplications(){
+    @Test(expected = RepositoryHasStillProjectException.class)
+    public void canNotDeleteRepositoryUsedByProjects(){
         repositoryService.delete(repositoryService.findById(idTestRepository1()).get());
     }
-    @Test(expected = ApplicationAlreadyExistsException.class)
-    public void applicationNameAndRepositoryCanNotBeIdenticalAtTheSameTime(){
-        Application application = new Application("test1",
+    @Test(expected = ProjectAlreadyExistsException.class)
+    public void projectNameAndRepositoryCanNotBeIdenticalAtTheSameTime(){
+        Project project = new Project("test1",
                 repositoryService.findById(idTestRepository1()).get());
-        applicationService.create(application);
+        projectService.create(project);
 
     }
     @Test
-    public void applicationNameCanBeIdenticalIfRepositoriesAreDifferent(){
-        int applicationsSize = applicationService.findAll().size();
-        Application application = new Application("test1",
+    public void projectNameCanBeIdenticalIfRepositoriesAreDifferent(){
+        int projectsSize = projectService.findAll().size();
+        Project project = new Project("test1",
                 repositoryService.findById(idTestRepository2()).get());
-        applicationService.create(application);
-        assertEquals(applicationsSize + 1, applicationService.findAll().size());
+        projectService.create(project);
+        assertEquals(projectsSize + 1, projectService.findAll().size());
     }
     @Test
-    public void repositoryCanBeIdenticalIfApplicationNamesAreDifferent(){
-        int applicationsSize = applicationService.findAll().size();
-        Application application = new Application("test10",
+    public void repositoryCanBeIdenticalIfProjectNamesAreDifferent(){
+        int projectsSize = projectService.findAll().size();
+        Project project = new Project("test10",
                 repositoryService.findById(idTestRepository1()).get());
-        applicationService.create(application);
-        assertEquals(applicationsSize + 1, applicationService.findAll().size());
+        projectService.create(project);
+        assertEquals(projectsSize + 1, projectService.findAll().size());
     }
     @Test
-    public void deleteRepositoryWorksAfterDeletingLastApplicationFromThatRepository(){
-        int applicationsSize = applicationService.findAll().size();
+    public void deleteRepositoryWorksAfterDeletingLastProjectFromThatRepository(){
+        int projectsSize = projectService.findAll().size();
         int repositoriesSize = repositoryService.findAll().size();
-        applicationService.delete(
-                applicationService.findByApplicationName("test2").get(0));
+        projectService.delete(
+                projectService.findByProjectName("test2").get(0));
         repositoryService.delete(
                 repositoryService.findById(idTestRepository2()).get());
-        assertEquals(applicationsSize - 1, applicationService.findAll().size());
+        assertEquals(projectsSize - 1, projectService.findAll().size());
         assertEquals(repositoriesSize - 1, repositoryService.findAll().size());
     }
     private long idTestRepository1(){

@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title=#{createProject})"></head>
+<body>
+<nav th:replace="fragments::menu"></nav>
+<div>
+    <form method="post" th:action="@{/projects/create}" th:object="${projectForm}">
+        <input th:class="userProject" type="text" th:name="projectName">
+        <input type="hidden" th:value="*{projectName}">
+    </form>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title=#{projects})"></head>
+<body>
+<nav th:replace="fragments::menu"></nav>
+<ul th:class="project">
+    <li th:each="project:${projects}"
+        th:object="${project}">
+        <a th:href="@{/projects/{id}(id=*{projectId})}"
+           th:text="*{projectName}"></a>
+    </li>
+    <li th:class="${principal} != null ? 'registratie' : 'none'">
+        <form th:class="button" th:action="@{/projects/newProject}" method='get'>
+            <input type='submit' th:value="#{makeNewProject}">
+        </form>
+    </li>
+</ul>
+</body>
+</html>

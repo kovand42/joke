@@ -39,6 +39,6 @@ public class SecurityConfig
         http.formLogin().loginPage("/login").and().logout().logoutSuccessUrl("/")
                 .and().authorizeRequests()
                 .mvcMatchers("/profile/**").hasAnyAuthority("user", "admin")
-                .mvcMatchers("/applications/**").hasAnyAuthority("user", "admin");
+                .mvcMatchers("/projects/**").hasAnyAuthority("user", "admin");
     }
 }

@@ -10,44 +10,44 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "applications")
-@NamedEntityGraph(name = Application.WITH_USERSKILLS,
+@Table(name = "projects")
+@NamedEntityGraph(name = Project.WITH_USERSKILLS,
         attributeNodes = {@NamedAttributeNode("repository"),
                 @NamedAttributeNode("userSkills")})
-public class Application implements Serializable {
-    public static final String WITH_USERSKILLS="Application.withUserSkills";
+public class Project implements Serializable {
+    public static final String WITH_USERSKILLS="Project.withUserSkills";
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long applicationId;
+    private long projectId;
     @NotBlank
-    private String applicationName;
+    private String projectName;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "repositoryId")
     @NotNull
     private Repository repository;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "userapplications",
-            joinColumns = @JoinColumn(name = "applicationId"),
+            name = "userprojects",
+            joinColumns = @JoinColumn(name = "projectId"),
             inverseJoinColumns = @JoinColumn(name = "userSkillId"))
     private Set<UserSkill> userSkills = new LinkedHashSet<>();
     @Version
     private long version;
 
-    protected Application() {}
+    protected Project() {}
 
-    public Application(@NotBlank String applicationName, @NotNull Repository repository) {
-        this.applicationName = applicationName;
+    public Project(@NotBlank String projectName, @NotNull Repository repository) {
+        this.projectName = projectName;
         this.repository = repository;
     }
 
-    public long getApplicationId() {
-        return applicationId;
+    public long getProjectId() {
+        return projectId;
     }
 
-    public String getApplicationName() {
-        return applicationName;
+    public String getProjectName() {
+        return projectName;
     }
 
     public Repository getRepository() {
@@ -56,7 +56,7 @@ public class Application implements Serializable {
 
     public boolean add(UserSkill userSkill){
         boolean added = userSkills.add(userSkill);
-        if(! userSkill.getApplications().contains(this)){
+        if(! userSkill.getProjects().contains(this)){
             userSkill.add(this);
         }
         return added;
@@ -64,7 +64,7 @@ public class Application implements Serializable {
 
     public boolean remove(UserSkill userSkill){
         boolean removed = userSkills.remove(userSkill);
-        if(userSkill.getApplications().contains(this)){
+        if(userSkill.getProjects().contains(this)){
             userSkill.remove(this);
         }
         return removed;
@@ -77,19 +77,19 @@ public class Application implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Application)) return false;
-        Application that = (Application) o;
+        if (!(o instanceof Project)) return false;
+        Project that = (Project) o;
         return getRepository().equals(that.getRepository()) &&
-                getApplicationName().equalsIgnoreCase(that.getApplicationName());
+                getProjectName().equalsIgnoreCase(that.getProjectName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getApplicationName(), getRepository());
+        return Objects.hash(getProjectName(), getRepository());
     }
 
     @Override
     public String toString() {
-        return repository.toString() + " : " + applicationName;
+        return repository.toString() + " : " + projectName;
     }
 }

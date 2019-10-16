@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="nl" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head(title=#{addProjects})"></head>
+<body>
+<nav th:replace="fragments::menu"></nav>
+<ul><span th:text="#{projects}"></span>
+    <li th:each="project:${projects}"
+        th:object="${project}">
+        <form th:action="@{/profile/addProjects/add}" method='post'>
+            <input type='submit' th:value="*{projectName}">
+            <input type="hidden" th:name="projectId" th:value="*{projectId}">
+            <input type="hidden" th:name="id" th:value="${user.id}">
+        </form>
+    </li>
+</ul>
+<form th:action="@{/profile/addSkills}" method='get'>
+    <input type='submit' th:value="#{addSkills}">
+    <input type="hidden" th:name="id" th:value="*{id}">
+</form>
+</body>
+</html>

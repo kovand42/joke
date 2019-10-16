@@ -3,12 +3,13 @@ package net.kovand42.kova_design.sessions;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Component
 @SessionScope
-public class AppSkills {
+public class SkillsForNewProject implements Serializable {
     private final long serialVersionUID = 1L;
     private Set<Long> newSkills = new LinkedHashSet<>();
     private boolean notEmpty = false;

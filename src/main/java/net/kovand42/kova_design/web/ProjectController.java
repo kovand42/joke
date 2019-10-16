@@ -1,11 +1,11 @@
 package net.kovand42.kova_design.web;
 
 import net.kovand42.kova_design.entities.*;
-import net.kovand42.kova_design.forms.ApplicationForm;
+import net.kovand42.kova_design.forms.ProjectForm;
 import net.kovand42.kova_design.forms.RepositoryForm;
 import net.kovand42.kova_design.services.*;
-import net.kovand42.kova_design.sessions.AppSkills;
-import net.kovand42.kova_design.sessions.SkillsForNewApp;
+import net.kovand42.kova_design.sessions.ProjectSkills;
+import net.kovand42.kova_design.sessions.SkillsForNewProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Controller
-@RequestMapping("/applications")
-public class ApplicationController {
+@RequestMapping("/projects")
+public class ProjectController {
     @Autowired
-    ApplicationService applicationService;
+    ProjectService projectService;
     @Autowired
     UserSkillService userSkillService;
     @Autowired
@@ -31,109 +31,110 @@ public class ApplicationController {
     @Autowired
     UserService userService;
     @Autowired
-    SkillsForNewApp skillsForNewApp;
+    SkillsForNewProject skillsForNewProject;
     @Autowired
-    AppSkills appSkills;
+    ProjectSkills projectSkills;
     @Autowired
     RepositoryService repositoryService;
     @GetMapping
-    ModelAndView applications(Principal principal){
-        appSkills.setClear();
-        ModelAndView modelAndView = new ModelAndView("applications")
-                .addObject("applications",applicationService.findAll())
+    ModelAndView projects(Principal principal){
+        projectSkills.setClear();
+        ModelAndView modelAndView = new ModelAndView("projects")
+                .addObject("projects", projectService.findAll())
                 .addObject("principal", principal);
         return modelAndView;
     }
     @GetMapping("{id}")
-    ModelAndView application(@PathVariable long id, Principal principal){
-        ModelAndView modelAndView = new ModelAndView("application");
-        Application application = applicationService.findById(id).get();
-        List<Skill> localAppSkills = makeAppSkills(application);
-        List<User> users = makeAppUserList(application);
+    ModelAndView project(@PathVariable long id, Principal principal){
+        ModelAndView modelAndView = new ModelAndView("project");
+        Project project = projectService.findById(id).get();
+        List<Skill> localProjectSkills = makeProjectSkills(project);
+        List<User> users = makeProjectUserList(project);
         User user = userService.findByUsername(principal.getName()).get();
         boolean cont = users.contains(user);
         modelAndView.addObject("cont", cont);
-        modelAndView.addObject("appSkills", localAppSkills);
-        modelAndView.addObject("lackingSkills", lackingAppSkills(application));
+        modelAndView.addObject("projectSkills", localProjectSkills);
+        modelAndView.addObject("lackingSkills", lackingProjectSkills(project));
         modelAndView.addObject("user", user);
         modelAndView.addObject("principal", principal);
         modelAndView.addObject("users", users);
-        modelAndView.addObject("app", application);
-        modelAndView.addObject("lackingUserSkills", lackingUserSkills(application));
-        modelAndView.addObject("usersWithLackingAppSkill", makeLackingSkillsUserList(application));
+        modelAndView.addObject("project", project);
+        modelAndView.addObject("lackingUserSkills", lackingUserSkills(project));
+        modelAndView.addObject("usersWithLackingProjectSkill", makeLackingSkillsUserList(project));
         return modelAndView;
     }
-    @GetMapping("newApplication")
-    ModelAndView newApplication(Principal principal){
-        ModelAndView modelAndView = new ModelAndView("newApplication");
+    @GetMapping("newProject")
+    ModelAndView newProject(Principal principal){
+        ModelAndView modelAndView = new ModelAndView("newProject");
         User user = userService.findByUsername(principal.getName()).get();
         List<Skill> principalSkills = makeSkillListFromUser(user);
         List<Skill> skillsInUse = new LinkedList<>();
-        skillsForNewApp.getNewSkills().stream().forEach(id ->
+        skillsForNewProject.getNewSkills().stream().forEach(id ->
                 skillsInUse.add(skillService.findById(id).get()));
+        modelAndView.addObject("empty", skillsInUse.isEmpty());
         modelAndView.addObject("lackingSkills", lackingSkills(user));
         modelAndView.addObject("skillsInUse", skillsInUse);
         modelAndView.addObject("user", user);
         modelAndView.addObject("skills", principalSkills);
-        modelAndView.addObject("applicationForm", new ApplicationForm(null, null));
+        modelAndView.addObject("projectForm", new ProjectForm(null, null));
         modelAndView.addObject("repositoryForm", new RepositoryForm(null, null));
         return modelAndView;
     }
-    @GetMapping("newApplicationSkills")
-    ModelAndView newApplicationSkills(@RequestParam("id") long id, RedirectAttributes redirect){
-        skillsForNewApp.add(id);
-        return new ModelAndView("redirect:/applications/newApplication");
+    @GetMapping("newProjectSkills")
+    ModelAndView newProjectSkills(@RequestParam("id") long id, RedirectAttributes redirect){
+        skillsForNewProject.add(id);
+        return new ModelAndView("redirect:/projects/newProject");
     }
-    @GetMapping("ApplicationSkills")
-    ModelAndView ApplicationSkills(@RequestParam("id") long id,
-                                   @RequestParam("appId") long appId,
+    @GetMapping("projectSkills")
+    ModelAndView projectSkills(@RequestParam("id") long id,
+                                   @RequestParam("projectId") long projectId,
                                    RedirectAttributes redirect){
-        addSkillToApp(applicationService.findById(appId).get(), id);
+        addSkillToProject(projectService.findById(projectId).get(), id);
         StringBuilder strB = new StringBuilder();
-        strB.append("redirect:/applications/").append(appId);
+        strB.append("redirect:/projects/").append(projectId);
         String redirectURL = strB.toString();
         return new ModelAndView(redirectURL);
     }
-    @GetMapping("ApplicationSkills/remove")
+    @GetMapping("projectSkills/remove")
     ModelAndView removeSkill(@RequestParam("id") long id,
-                             @RequestParam("appId") long appId,
+                             @RequestParam("projectId") long projectId,
                              RedirectAttributes redirect){
-        removeSkillFromApp(applicationService.findById(appId).get(), id);
+        removeSkillFromProject(projectService.findById(projectId).get(), id);
         StringBuilder strB = new StringBuilder();
-        strB.append("redirect:/applications/").append(appId);
+        strB.append("redirect:/projects/").append(projectId);
         String redirectURL = strB.toString();
         return new ModelAndView(redirectURL);
     }
-    @GetMapping("newApplicationSkills/remove")
+    @GetMapping("newProjectSkills/remove")
     ModelAndView remove(@RequestParam("id") long id, RedirectAttributes redirect){
-        skillsForNewApp.remove(id);
-        return new ModelAndView("redirect:/applications/newApplication");
+        skillsForNewProject.remove(id);
+        return new ModelAndView("redirect:/projects/newProject");
     }
     @PostMapping("create/repo")
     ModelAndView ceateRepo(@Valid RepositoryForm repositoryForm,
-            Errors errors, @RequestParam("appName") String appName,
+            Errors errors, @RequestParam("projectName") String projectName,
                            @RequestParam("url") String url,
                            RedirectAttributes redirect, Principal principal){
-        ModelAndView modelAndView = new ModelAndView("createApp");
+        ModelAndView modelAndView = new ModelAndView("createProject");
         if(errors.hasErrors()){
             return modelAndView;
         }
         Repository repository = new Repository(repositoryForm.getRepositoryName(), url);
         repositoryService.create(repository);
-        makeAppFromUrlAndAppName(repositoryForm.getUrl(), appName, principal);
-        return new ModelAndView("redirect:/applications");
+        makeProjectFromUrlAndProjectName(repositoryForm.getUrl(), projectName, principal);
+        return new ModelAndView("redirect:/projects");
     }
     @PostMapping("create")
-    ModelAndView create(@Valid ApplicationForm applicationForm, Errors appErrors,
+    ModelAndView create(@Valid ProjectForm projectForm, Errors appErrors,
                         @Valid RepositoryForm repositoryForm, Errors repoErrors,
                         RedirectAttributes redirect, Principal principal){
         if(repositoryService.findByUrl(repositoryForm.getUrl()).isPresent()){
-            makeAppFromUrlAndAppName(repositoryForm.getUrl(), applicationForm.getApplicationName(), principal);
-            return new ModelAndView("redirect:/applications");
+            makeProjectFromUrlAndProjectName(repositoryForm.getUrl(), projectForm.getProjectName(), principal);
+            return new ModelAndView("redirect:/projects");
         }
-        ModelAndView modelAndView = new ModelAndView("createApp")
+        ModelAndView modelAndView = new ModelAndView("createProject")
                 .addObject("url", repositoryForm.getUrl())
-                .addObject("appName", applicationForm.getApplicationName())
+                .addObject("projectName", projectForm.getProjectName())
                 .addObject("repoForm", new RepositoryForm(null, repositoryForm.getUrl()));
        return modelAndView;
     }
@@ -141,26 +142,26 @@ public class ApplicationController {
         List<UserSkill> userSkills = userSkillService.findByUser(user);
         List<Skill> skills = new LinkedList<>();
         userSkills.forEach(userSkill -> {
-            if(!skillsForNewApp.contains(userSkill.getSkill().getSkillId())){
+            if(!skillsForNewProject.contains(userSkill.getSkill().getSkillId())){
                 skills.add(userSkill.getSkill());
             }
         });
         return skills;
     }
-    private void makeAppFromUrlAndAppName(String url, String appName,
-                                          Principal principal){
+    private void makeProjectFromUrlAndProjectName(String url, String projectName,
+                                                  Principal principal){
         Repository repository = repositoryService.findByUrl(url).get();
-        Application application = new Application(appName, repository);
+        Project project = new Project(projectName, repository);
         User user = userService.findByUsername(principal.getName()).get();
-        skillsForNewApp.getNewSkills().stream().forEach(id -> {
+        skillsForNewProject.getNewSkills().stream().forEach(id -> {
             userSkillService.findBySkill(skillService.findById(id).get()).forEach(userSkill -> {
                 if(userSkill.getUser().equals(user)){
-                    application.add(userSkill);
+                    project.add(userSkill);
                 }
             });
         });
-        applicationService.create(application);
-        skillsForNewApp.setClear();
+        projectService.create(project);
+        skillsForNewProject.setClear();
     }
     private List<Skill> lackingSkills(User user){
         List<Skill> userSkills = makeSkillListFromUser(user);
@@ -168,15 +169,15 @@ public class ApplicationController {
         masterSkills.removeAll(userSkills);
         return masterSkills;
     }
-    private List<Skill> lackingAppSkills(Application application){
+    private List<Skill> lackingProjectSkills(Project project){
         List<Skill> masterSkills = makeMasterSkills();
-        List<Skill> appSkills = makeAppSkills(application);
-        masterSkills.removeAll(appSkills);
+        List<Skill> projectSkills = makeProjectSkills(project);
+        masterSkills.removeAll(projectSkills);
         return masterSkills;
     }
-    private List<Skill> lackingUserSkills(Application application){
-        List<Skill> masterSkills = makeAppSkills(application);
-        List<User> users = makeAppUserList(application);
+    private List<Skill> lackingUserSkills(Project project){
+        List<Skill> masterSkills = makeProjectSkills(project);
+        List<User> users = makeProjectUserList(project);
         users.forEach(user -> {
             if(!(user.getUsername().equals("master"))){
                 masterSkills.removeAll(makeSkillListFromUser(user));
@@ -189,45 +190,45 @@ public class ApplicationController {
         List<Skill> masterSkills = makeSkillListFromUser(master);
         return masterSkills;
     }
-    private List<Skill> makeAppSkills(Application application){
-        List<Skill> appSkillsLocale = new LinkedList<>();
-        application.getUserSkills().stream().forEach(userSkill -> {
-            if(!appSkillsLocale.contains(userSkill.getSkill())){
-                appSkillsLocale.add(userSkill.getSkill());
+    private List<Skill> makeProjectSkills(Project project){
+        List<Skill> projectSkillsLocale = new LinkedList<>();
+        project.getUserSkills().stream().forEach(userSkill -> {
+            if(!projectSkillsLocale.contains(userSkill.getSkill())){
+                projectSkillsLocale.add(userSkill.getSkill());
             }
         });
-        appSkillsLocale.forEach(skill -> {
-            appSkills.add(skill.getSkillId());
+        projectSkillsLocale.forEach(skill -> {
+            projectSkills.add(skill.getSkillId());
         });
-        return appSkillsLocale;
+        return projectSkillsLocale;
     }
-    private void removeSkillFromApp(Application application, long skillId){
-        List<User> users = makeAppUserList(application);
-        appSkills.remove(skillId);
+    private void removeSkillFromProject(Project project, long skillId){
+        List<User> users = makeProjectUserList(project);
+        projectSkills.remove(skillId);
         users.forEach(user -> {
             userSkillService.findByUser(user).forEach(userSkill -> {
                 if (userSkill.getSkill().getSkillId() == skillId){
-                    application.remove(userSkill);
+                    project.remove(userSkill);
                 }
             });
         });
-        applicationService.update(application);
+        projectService.update(project);
     }
-    private void addSkillToApp(Application application, long id){
-        List<User> users = makeAppUserList(application);
-        appSkills.add(id);
+    private void addSkillToProject(Project project, long id){
+        List<User> users = makeProjectUserList(project);
+        projectSkills.add(id);
         users.forEach(user -> {
             userSkillService.findByUser(user).forEach(userSkill -> {
                 if(userSkill.getSkill().getSkillId() == id){
-                    application.add(userSkill);
+                    project.add(userSkill);
                 }
             });
         });
-        applicationService.update(application);
+        projectService.update(project);
     }
-    private List<User> makeAppUserList(Application application){
+    private List<User> makeProjectUserList(Project project){
         List<User> users = new LinkedList<>();
-        application.getUserSkills()
+        project.getUserSkills()
                 .stream().forEach(userSkill -> {
             if(!users.contains(userSkill.getUser())){
                 users.add(userSkill.getUser());
@@ -235,11 +236,11 @@ public class ApplicationController {
         });
         return users;
     }
-    private List<User> makeLackingSkillsUserList(Application application){
+    private List<User> makeLackingSkillsUserList(Project project){
         List<User> users = userService.findAll();
         List<User> lackingUsers = new LinkedList<>();
         users.remove(userService.findByUsername("master").get());
-        List<Skill> lackingSkills = lackingUserSkills(application);
+        List<Skill> lackingSkills = lackingUserSkills(project);
         users.forEach(user -> {
             List<Skill> userSkills = makeSkillListFromUser(user);
             AtomicBoolean need = new AtomicBoolean(false);
@@ -248,7 +249,7 @@ public class ApplicationController {
                     need.set(true);
                 }
             });
-            if((need.get())&&!(makeAppUserList(application).contains(user))){
+            if((need.get())&&!(makeProjectUserList(project).contains(user))){
                 lackingUsers.add(user);
             }
         });

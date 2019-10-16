@@ -60,7 +60,7 @@ public class SkilllController {
         Skill skill = skillService.findById(id).get();
         List<UserSkill> userSkills = userSkillService.findBySkill(skill);
         modelAndView.addObject("skill", skill);
-        modelAndView.addObject("applications",makeApplicationSet(userSkills));
+        modelAndView.addObject("projects",makeProjectSet(userSkills));
         modelAndView.addObject("users", makeUserSet(skill));
         return modelAndView;
     }
@@ -76,16 +76,16 @@ public class SkilllController {
         return users;
     }
 
-    private Set<Application> makeApplicationSet(List<UserSkill> userSkills){
-        Set<Application> applications = new LinkedHashSet<>();
+    private Set<Project> makeProjectSet(List<UserSkill> userSkills){
+        Set<Project> projects = new LinkedHashSet<>();
         userSkills.forEach(userSkill -> {
-            userSkill.getApplications().stream().forEach(application -> {
-                if(!applications.contains(application)){
-                    applications.add(application);
+            userSkill.getProjects().stream().forEach(project -> {
+                if(!projects.contains(project)){
+                    projects.add(project);
                 }
             });
         });
-        return applications;
+        return projects;
     }
 
     private ModelAndView decomposeOpen() {

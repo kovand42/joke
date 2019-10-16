@@ -10,13 +10,13 @@ import java.util.Set;
 
 @Entity
 @Table(name = "userskills")
-@NamedEntityGraph(name = UserSkill.WITH_APPLICATIONS,
+@NamedEntityGraph(name = UserSkill.WITH_PROJECTS,
 attributeNodes = {@NamedAttributeNode("skill"),
-        @NamedAttributeNode("applications"),
+        @NamedAttributeNode("projects"),
 @NamedAttributeNode("user")})
 public class UserSkill implements Serializable {
     private static final long serialVersionUID = 1L;
-    public static final String WITH_APPLICATIONS = "UserSkill.withApplications";
+    public static final String WITH_PROJECTS = "UserSkill.withProjects";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userSkillId;
@@ -30,7 +30,7 @@ public class UserSkill implements Serializable {
     private Skill skill;
     boolean validated;
     @ManyToMany(mappedBy = "userSkills")
-    private Set<Application> applications = new LinkedHashSet<>();
+    private Set<Project> projects = new LinkedHashSet<>();
     @Version
     private long version;
 
@@ -62,24 +62,24 @@ public class UserSkill implements Serializable {
         this.validated = validated;
     }
 
-    public boolean add(Application application){
-        boolean added = applications.add(application);
-        if(!application.getUserSkills().contains(this)){
-            application.add(this);
+    public boolean add(Project project){
+        boolean added = projects.add(project);
+        if(!project.getUserSkills().contains(this)){
+            project.add(this);
         }
         return added;
     }
 
-    public boolean remove(Application application){
-        boolean removed = applications.remove(application);
-        if(application.getUserSkills().contains(this)){
-            application.remove(this);
+    public boolean remove(Project project){
+        boolean removed = projects.remove(project);
+        if(project.getUserSkills().contains(this)){
+            project.remove(this);
         }
         return removed;
     }
 
-    public Set<Application> getApplications(){
-        return Collections.unmodifiableSet(applications);
+    public Set<Project> getProjects(){
+        return Collections.unmodifiableSet(projects);
     }
 
     @Override

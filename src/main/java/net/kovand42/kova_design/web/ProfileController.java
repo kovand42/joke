@@ -1,16 +1,15 @@
 package net.kovand42.kova_design.web;
 
-import net.kovand42.kova_design.entities.Application;
+import net.kovand42.kova_design.entities.Project;
 import net.kovand42.kova_design.entities.Skill;
 import net.kovand42.kova_design.entities.User;
 import net.kovand42.kova_design.entities.UserSkill;
-import net.kovand42.kova_design.services.ApplicationService;
+import net.kovand42.kova_design.services.ProjectService;
 import net.kovand42.kova_design.services.SkillService;
 import net.kovand42.kova_design.services.UserService;
 import net.kovand42.kova_design.services.UserSkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -20,7 +19,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
@@ -32,18 +30,18 @@ public class ProfileController {
     @Autowired
     UserSkillService userSkillService;
     @Autowired
-    ApplicationService applicationService;
+    ProjectService projectService;
     @Autowired
     SkillService skillService;
     @GetMapping("/{id}")
     ModelAndView profile(@PathVariable long id, Principal principal){
         User user = userService.findById(id).get();
-        List<Application> applications = makeAppListFromUser(user);
+        List<Project> projects = makeProjectListFromUser(user);
         List<Skill> skills = makeSkillListFromUser(user);
         ModelAndView modelAndView = new ModelAndView("profile")
                 .addObject("user", userService.findById(id).get());
         modelAndView.addObject("skills", skills);
-        modelAndView.addObject("applications", applications);
+        modelAndView.addObject("projects", projects);
         modelAndView.addObject("principal", principal.getName());
         return modelAndView;
     }
@@ -62,13 +60,13 @@ public class ProfileController {
         modelAndView.addObject("user", user).addObject("id", id);
         return modelAndView.addObject("skills", skills);
     }
-    @GetMapping("/addApplications")
-    ModelAndView addApplications(@RequestParam("id") long id){
-        ModelAndView modelAndView = new ModelAndView("addApplications");
+    @GetMapping("/addProjects")
+    ModelAndView addProjects(@RequestParam("id") long id){
+        ModelAndView modelAndView = new ModelAndView("addProjects");
         User user = userService.findById(id).get();
-        List<Application> newApplications = makeNewAppListForUser(user);
+        List<Project> newProjects = makeNewProjectListForUser(user);
         modelAndView.addObject("user", user).addObject("id", id);
-        return modelAndView.addObject("applications", newApplications);
+        return modelAndView.addObject("projects", newProjects);
     }
     @PostMapping("/addSkills/add")
     ModelAndView saveAddSkill(@RequestParam("id") long id,
@@ -81,16 +79,16 @@ public class ProfileController {
         redirect.addAttribute("id", id);
         return new ModelAndView("redirect:/profile/addSkills");
     }
-    @PostMapping("/addApplications/add")
+    @PostMapping("/addProjects/add")
     ModelAndView saveAddApplication(@RequestParam("id") long id,
-                                    @RequestParam("applicationId") long applicationId,
+                                    @RequestParam("projectId") long projectId,
                                     RedirectAttributes redirect){
-        Application application = applicationService.findById(applicationId).get();
+        Project project = projectService.findById(projectId).get();
         User user = userService.findById(id).get();
-        Set<UserSkill> appUserSkills = application.getUserSkills();
+        Set<UserSkill> projectUserSkills = project.getUserSkills();
         List<UserSkill> userSkills = userSkillService.findByUser(user);
         Set<UserSkill> userSkillsInUse = new LinkedHashSet<>();
-        appUserSkills.stream().forEach(userSkill -> {
+        projectUserSkills.stream().forEach(userSkill -> {
             userSkills.forEach(userSkill1 -> {
                 if(userSkill1.getSkill().equals(userSkill.getSkill())){
                     userSkillsInUse.add(userSkill1);
@@ -98,49 +96,47 @@ public class ProfileController {
             });
         });
         userSkillsInUse.stream().forEach(userSkill -> {
-            application.add(userSkill);
+            project.add(userSkill);
         });
-        applicationService.update(application);
+        projectService.update(project);
         redirect.addAttribute("id", id);
-        return new ModelAndView("redirect:/profile/addApplications");
+        return new ModelAndView("redirect:/profile/addProjects");
     }
-    @PostMapping("/removeApplication")
-    ModelAndView removeApplication(@RequestParam("applicationId") long applicationId,
+    @PostMapping("/removeProject")
+    ModelAndView removeProject(@RequestParam("projectId") long projectId,
                                    @RequestParam("id") long id, RedirectAttributes redirect){
         User user = userService.findById(id).get();
         List<UserSkill> userSkills = userSkillService.findByUser(user);
-        Application application = applicationService.findById(applicationId).get();
-        AtomicInteger appUsers = new AtomicInteger(0);
-        application.getUserSkills().stream().forEach(userSkill -> {
+        Project project = projectService.findById(projectId).get();
+        AtomicInteger projectUsers = new AtomicInteger(0);
+        project.getUserSkills().stream().forEach(userSkill -> {
             if(!userSkill.getUser().equals(user)){
-                appUsers.getAndIncrement();
-                System.out.println(appUsers.get());
-                System.out.println(application.getApplicationName());
+                projectUsers.getAndIncrement();
+                System.out.println(projectUsers.get());
+                System.out.println(project.getProjectName());
             }
         });
-        if(appUsers.get()>0){
+        if(projectUsers.get()>0){
             userSkills.forEach(userSkill -> {
-                application.remove(userSkill);
+                project.remove(userSkill);
             });
-            applicationService.update(application);
+            projectService.update(project);
             redirect.addAttribute("id", id);
-            return new ModelAndView("redirect:/profile/addApplications");
+            return new ModelAndView("redirect:/profile/addProjects");
         }
-        ModelAndView modelAndView = new ModelAndView("deleteApplication");
+        ModelAndView modelAndView = new ModelAndView("deleteProject");
         modelAndView.addObject("user", user);
-        modelAndView.addObject("app", application);
+        modelAndView.addObject("project", project);
         return modelAndView;
     }
-    @PostMapping("/deleteApplication")
-    ModelAndView deleteApplication(@RequestParam("id") long id,
-                                   @RequestParam("applicationId") long applicationId,
+    @PostMapping("/deleteProject")
+    ModelAndView deleteProject(@RequestParam("id") long id,
+                                   @RequestParam("projectId") long projectId,
                                    RedirectAttributes redirect){
         redirect.addAttribute("id", id);
-        System.out.println(applicationService.findAll().size());
-        Application application = applicationService.findById(applicationId).get();
-        applicationService.delete(application);
-        System.out.println(applicationService.findAll().size());
-        return new ModelAndView("redirect:/profile/addApplications");
+        Project project = projectService.findById(projectId).get();
+        projectService.delete(project);
+        return new ModelAndView("redirect:/profile/addProject");
     }
     private List<Skill> makeSkillListFromUser(User user){
         List<UserSkill> userSkills = userSkillService.findByUser(user);
@@ -150,33 +146,33 @@ public class ProfileController {
         });
         return skills;
     }
-    private List<Application> makeAppListFromUser(User user){
+    private List<Project> makeProjectListFromUser(User user){
         List<UserSkill> userSkills = userSkillService.findByUser(user);
-        List<Application> applications = new LinkedList<>();
+        List<Project> projects = new LinkedList<>();
         userSkills.forEach(userSkill -> {
-            userSkill.getApplications().stream().forEach(application -> {
-                if(!applications.contains(application)) {
-                    applications.add(application);
+            userSkill.getProjects().stream().forEach(project -> {
+                if(!projects.contains(project)) {
+                    projects.add(project);
                 }
             });
         });
-        return applications;
+        return projects;
     }
-    private List<Application> makeNewAppListForUser(User user){
-        List<Application> userApplications = makeAppListFromUser(user);
-        List<Application> applications = applicationService.findAll();
-        List<Application> newAppList = new LinkedList<>();
+    private List<Project> makeNewProjectListForUser(User user){
+        List<Project> userProjects = makeProjectListFromUser(user);
+        List<Project> projects = projectService.findAll();
+        List<Project> newProjectList = new LinkedList<>();
         List<Skill> userSkills = makeSkillListFromUser(user);
-        applications.removeAll(userApplications);
-        applications.forEach(application -> {
+        projects.removeAll(userProjects);
+        projects.forEach(application -> {
             application.getUserSkills().stream().forEach(userSkill -> {
                 if(userSkills.contains(userSkill.getSkill())
-                &&!newAppList.contains(application)
-                &&!userApplications.contains(application)){
-                    newAppList.add(application);
+                &&!newProjectList.contains(application)
+                &&!userProjects.contains(application)){
+                    newProjectList.add(application);
                 }
             });
         });
-        return newAppList;
+        return newProjectList;
     }
 }

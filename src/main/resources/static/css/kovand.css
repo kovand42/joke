@@ -191,14 +191,6 @@ ul>li>img:hover {
 	transform: rotate(360deg) 2s;
 }
 
-.application, .users {
-	display: grid;
-}
-
-.userApplications {
-	display: inline-block;
-}
-
 ul>li>a {
 	color: white;
 	line-height: 1.8em;
@@ -222,19 +214,28 @@ ul>li>a {
 	color: black;
 	background-color: white;
 }
-.userApplications>ul>li {
+
+.project, .users {
+	display: grid;
+}
+
+.userProjects {
+	display: inline-block;
+}
+
+.userProjects>ul>li {
 	margin-top: 2em;
 }
 
-.userApplication>ul>li>a {
+.userProject>ul>li>a {
 	display: block;
 	float: left;
 }
-.userApplications>ul>li>form {
+.userProjects>ul>li>form {
 	display: block;
 	float: left;
 }
-.userApplication>ul>li>a {
+.userProject>ul>li>a {
 	display: block;
 	float: left;
 }

@@ -6,19 +6,19 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-public class ApplicationForm {
+public class ProjectForm {
     @NotBlank
-    private String applicationName;
+    private String projectName;
     @NotNull
     private Repository repository;
 
-    public ApplicationForm(String applicationName, Repository repository) {
-        this.applicationName = applicationName;
+    public ProjectForm(String projectName, Repository repository) {
+        this.projectName = projectName;
         this.repository = repository;
     }
 
-    public String getApplicationName() {
-        return applicationName;
+    public String getProjectName() {
+        return projectName;
     }
 
     public Repository getRepository() {
@@ -28,21 +28,21 @@ public class ApplicationForm {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ApplicationForm)) return false;
-        ApplicationForm that = (ApplicationForm) o;
-        return getApplicationName().equalsIgnoreCase(that.getApplicationName()) &&
+        if (!(o instanceof ProjectForm)) return false;
+        ProjectForm that = (ProjectForm) o;
+        return getProjectName().equalsIgnoreCase(that.getProjectName()) &&
                 getRepository().equals(that.getRepository());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getApplicationName(), getRepository());
+        return Objects.hash(getProjectName(), getRepository());
     }
 
     @Override
     public String toString() {
-        return "ApplicationForm{" +
-                "applicationName='" + applicationName + '\'' +
+        return "ProjectForm{" +
+                "projectName='" + projectName + '\'' +
                 ", repository=" + repository +
                 '}';
     }
