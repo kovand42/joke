@@ -126,7 +126,7 @@ CREATE TABLE userprojects (
                                   CONSTRAINT userprojects_projectId FOREIGN KEY (projectId) REFERENCES projects(projectId)
 );
 
-insert into userprojects(userSkillId, projectId) values (1,1),(8,3),(2,1),(11,4),(12,4),(11,3),(12,2),(12,5);
+insert into userprojects(userSkillId, projectId) values (24,1),(31,3),(25,1),(34,4),(35,4),(34,3),(35,2),(35,5);
 
 CREATE TABLE roles (
                        roleId int unsigned NOT NULL AUTO_INCREMENT primary key,

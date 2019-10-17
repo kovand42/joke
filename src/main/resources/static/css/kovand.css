@@ -168,7 +168,14 @@ h3 {
 	text-align: left;
 	color: lime;
 }
-
+.left>span>h3 {
+	display: inline;
+	text-align: center;
+}
+.right>span>h3 {
+	display: inline;
+	text-align: center;
+}
 ul>li>img {
 	width: 70px;
 	height: 64px;
@@ -199,13 +206,15 @@ ul>li>a {
 	text-decoration: none;
 	font-weight: bold;
 }
-
 .categoryList {
 	display: block;
 	padding: 1.5em;
 	float: left;
 }
-
+.title{
+	display: inline;
+	text-align: center;
+}
 .close {
 	float: right;
 	margin-right: 1em;
@@ -244,15 +253,20 @@ ul>li>a {
 	margin-bottom: 1em;
 	margin-bottom: 1em;
 }
-.forum {
-	max-width: 49%;
+.left {
+	position: relative;
+	float: left;
+	max-width: 60%;
+}
+.right {
+	max-width: 30%;
 	position: relative;
 	float: right;
-	max-height: 75%;
-	scroll-padding-right: auto;
 }
-.forum>ul{
+.right>.container{
 	list-style: none;
+	max-height: 600px;
+	overflow: scroll;
 }
 .weather {
 	text-align: center;
