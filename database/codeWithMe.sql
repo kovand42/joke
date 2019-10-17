@@ -7,7 +7,7 @@ use codeWithMe;
 CREATE TABLE categories (
                             categoryId int unsigned NOT NULL AUTO_INCREMENT primary key,
                             categoryName varchar(50) NOT NULL unique,
-                            version int unsigned NOT NULL DEFAULT 0
+                            version int unsigned DEFAULT 0
 );
 
 INSERT INTO categories(categoryName) VALUES
@@ -24,7 +24,7 @@ CREATE TABLE skills(
                        skillName varchar(50) NOT NULL unique,
                        categoryId int unsigned NOT NULL,
                        validated tinyint DEFAULT 0,
-                       version int unsigned NOT NULL DEFAULT 0,
+                       version int unsigned DEFAULT 0,
                        CONSTRAINT skills_categoryId FOREIGN KEY (categoryId) REFERENCES categories(categoryId)
 );
 
@@ -58,8 +58,8 @@ CREATE TABLE users (
                        username varchar(50) NOT NULL unique,
                        email varchar(50) NOT NULL unique,
                        password varchar(127) NOT NULL,
-                       enabled tinyint NOT NULL default 1,
-                       version int unsigned NOT NULL DEFAULT 0
+                       enabled tinyint default 1,
+                       version int unsigned DEFAULT 0
 );
 
 INSERT INTO users(username,email,password) VALUES
@@ -72,7 +72,7 @@ CREATE TABLE userskills (
                             userId int unsigned NOT NULL,
                             skillId int unsigned NOT NULL,
                             validated tinyint DEFAULT 0,
-                            version int unsigned NOT NULL DEFAULT 0,
+                            version int unsigned DEFAULT 0,
                             CONSTRAINT userskills_userId FOREIGN KEY (userId) REFERENCES users(id),
                             CONSTRAINT userskills_skillId FOREIGN KEY (skillId) REFERENCES skills(skillId)
 );
@@ -86,7 +86,7 @@ CREATE TABLE repositories (
                               repositoryId int unsigned NOT NULL AUTO_INCREMENT primary key,
                               repositoryName varchar(50) NOT NULL,
                               version int unsigned NOT NULL DEFAULT 0,
-                              url varchar(255) NOT NULL unique
+                              url varchar(255) unique
 );
 
 insert into repositories (repositoryName, url) values ('application1', 'www.application1.be'),('application1', 'www.application2.be');
@@ -95,7 +95,7 @@ CREATE TABLE projects (
                               projectId int unsigned NOT NULL AUTO_INCREMENT primary key,
                               projectName varchar(50) NOT NULL,
                               repositoryId int unsigned NOT NULL,
-                              version int unsigned NOT NULL DEFAULT 0,
+                              version int unsigned DEFAULT 0,
                               CONSTRAINT applications_repositoryId FOREIGN KEY (repositoryId) REFERENCES repositories(repositoryId)
 );
 
@@ -105,7 +105,7 @@ insert into projects (projectName, repositoryId) values ('project1_1',(select re
                                                                 ('project2_1',(select repositoryId from repositories where url = 'www.application2.be')),
                                                                 ('project2_2',(select repositoryId from repositories where url = 'www.application2.be'));
 
-Create TABLE projectMessages (
+CREATE TABLE projectMessages (
                                 projectMessageId int unsigned NOT NULL AUTO_INCREMENT primary key,
                                 projectId int unsigned NOT NULL,
                                 userId int unsigned NOT NULL,
@@ -121,17 +121,42 @@ CREATE TABLE userprojects (
                                   userSkillId int unsigned NOT NULL,
                                   projectId int unsigned NOT NULL,
                                   primary key (userSkillId,projectId),
-                                  version int unsigned NOT NULL DEFAULT 0,
+                                  version int unsigned DEFAULT 0,
                                   CONSTRAINT userprojects_userSkillId FOREIGN KEY (userSkillId) REFERENCES userskills(userSkillId),
                                   CONSTRAINT userprojects_projectId FOREIGN KEY (projectId) REFERENCES projects(projectId)
 );
 
 insert into userprojects(userSkillId, projectId) values (24,1),(31,3),(25,1),(34,4),(35,4),(34,3),(35,2),(35,5);
 
+CREATE TABLE projectauthorities (
+                                projectAuthorityId int unsigned NOT NULL AUTO_INCREMENT primary key,
+                                projectAuthority varchar(50) NOT NULL,
+                                version int unsigned DEFAULT 0
+);
+
+CREATE TABLE projectuserauthorities (
+                                projectId int unsigned NOT NULL,
+                                userId int unsigned NOT NULL,
+                                PRIMARY KEY (projectId, userId),
+                                projectAuthorityId int unsigned NOT NULL,
+                                version int unsigned DEFAULT 0,
+                                CONSTRAINT projectuserauthorities_projectId FOREIGN KEY (projectId) REFERENCES projects(projectId),
+                                CONSTRAINT projectuserauthorities_userId FOREIGN KEY (userId) REFERENCES users(id),
+                                CONSTRAINT projectuserauthorities_projectAuthorityId FOREIGN KEY (projectAuthorityId) REFERENCES projectauthorities(projectAuthorityId)
+);
+CREATE TABLE requests (
+                                projectId int unsigned NOT NULL,
+                                userId int unsigned NOT NULL,
+                                PRIMARY KEY (projectId,userId),
+                                invitation tinyint DEFAULT 0,
+                                version int unsigned DEFAULT 0,
+                                CONSTRAINT requests_projectId FOREIGN KEY (projectId) REFERENCES projects(projectId),
+                                CONSTRAINT requests_userId FOREIGN KEY (userId) REFERENCES users(id)
+);
 CREATE TABLE roles (
                        roleId int unsigned NOT NULL AUTO_INCREMENT primary key,
                        roleName varchar(50) NOT NULL unique,
-                       version int unsigned NOT NULL DEFAULT 0
+                       version int unsigned DEFAULT 0
 );
 
 insert into roles(roleName) values ('admin'),('user');
@@ -141,7 +166,7 @@ CREATE TABLE userroles (
                            userId int unsigned NOT NULL unique,
                            roleId int unsigned NOT NULL,
                            PRIMARY KEY (userId,roleid),
-                           version int unsigned NOT NULL DEFAULT 0,
+                           version int unsigned DEFAULT 0,
                            CONSTRAINT userroles_roleId FOREIGN KEY (roleId) REFERENCES roles(roleId),
                            CONSTRAINT userroles_userId FOREIGN KEY (userId) REFERENCES users(id)
 );
@@ -152,6 +177,9 @@ create user if not exists cursist identified by 'Cursist11.';
 grant select,insert,update,delete on categories to cursist;
 grant select,insert,update,delete on skills to cursist;
 grant select,insert,update,delete on projects to cursist;
+grant select,insert,update,delete on projectauthorities to cursist;
+grant select,insert,update,delete on projectuserauthorities to cursist;
+grant select,insert,update,delete on requests to cursist;
 grant select,insert,update,delete on users to cursist;
 grant select,insert,update,delete on roles to cursist;
 grant select,insert,update,delete on userroles to cursist;

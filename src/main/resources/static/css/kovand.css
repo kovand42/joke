@@ -1,6 +1,7 @@
 body {
 	background-image: url("/images/kovand.jpg");
 	background-repeat: no-repeat;
+	background-color: black;
 	color: #edd400;
 	opacity: 0.7;
 	font-family: sans-serif;
@@ -98,6 +99,7 @@ body>ul>li {
 ul>li>a>img {
 	width: 70px;
 	height: 64px;
+	text-align: center;
 	-webkit-transition: width 2s, height 2s, -webkit-transform 2s;
 	transition: width 2s, height 2s, transform 2s;
 }
