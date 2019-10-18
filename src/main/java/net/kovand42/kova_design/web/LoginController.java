@@ -55,10 +55,11 @@ public class LoginController {
         if(userForm.validatePaswoord(
                 userForm.getPassword(), userForm.getConfirmPassword())){
             Role role = roleService.findByRoleName("user").get();
-            user.add(role);
+            role.add(user);
             userService.create(user);
+            roleService.update(role);
             authWithHttpServletRequest(request, userForm.getUsername(), userForm.getPassword());
-            return new ModelAndView("redirect:/applications");
+            return new ModelAndView("redirect:/projects");
         }
         return modelAndView.addObject("message", "password and confirm password don't match");
     }

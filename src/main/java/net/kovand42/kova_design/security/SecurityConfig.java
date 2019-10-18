@@ -15,10 +15,10 @@ import javax.sql.DataSource;
 public class SecurityConfig
         extends WebSecurityConfigurerAdapter {
     private static final String AUTHORITIES_BY_USERNAME =
-            "select username, roles.roleName as authorities from users" +
+            "select users.username as username, roles.roleName as authorities from users" +
                     " inner join userroles on users.id = userroles.userId" +
                     " inner join roles on roles.roleId = userroles.roleId" +
-                    " where username = ?";
+                    " where users.username = ?";
 ;
     private static final String USERS_BY_USERNAME =
             "select username, password, enabled" +
