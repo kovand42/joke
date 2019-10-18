@@ -11,7 +11,8 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @NamedEntityGraph(name = User.WITH_ROLES,
-        attributeNodes = {@NamedAttributeNode("roles")})
+        attributeNodes = {@NamedAttributeNode("roles"),
+        @NamedAttributeNode("projectAuthorities")})
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final String WITH_ROLES="User.withRoles";
@@ -29,6 +30,8 @@ public class User implements Serializable {
     private boolean enabled;
     @ManyToMany(mappedBy = "users")
     private Set<Role> roles = new LinkedHashSet<>();
+    @ManyToMany(mappedBy = "usersWithAuth")
+    private Set<ProjectAuthority> projectAuthorities = new LinkedHashSet<>();
     @Version
     private long version;
 
@@ -86,8 +89,28 @@ public class User implements Serializable {
         return removed;
     }
 
+    public boolean addProjectAuthority(ProjectAuthority projectAuthority){
+        boolean added = projectAuthorities.add(projectAuthority);
+        if(!projectAuthority.getUsersWithAuth().contains(this)){
+            projectAuthority.addUser(this);
+        }
+        return added;
+    }
+
+    public boolean removeProjectAuthority(ProjectAuthority projectAuthority){
+        boolean removed = projectAuthorities.remove(projectAuthority);
+        if(projectAuthority.getUsersWithAuth().contains(this)){
+            projectAuthority.removeUser(this);
+        }
+        return removed;
+    }
+
     public Set<Role> getRoles(){
         return Collections.unmodifiableSet(roles);
+    }
+
+    public Set<ProjectAuthority> getProjectAuthorities(){
+        return Collections.unmodifiableSet(projectAuthorities);
     }
 
     @Override

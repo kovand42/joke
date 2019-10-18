@@ -4,6 +4,7 @@
 <body>
 <nav th:replace="fragments::menu"></nav>
 <div th:class="left">
+    <h3 th:text="|Authority in ${project.projectName}:  ${projectAuthority}|"></h3>
 <h1 th:text="${project.projectName}"></h1>
 <h3 th:text="|#{users} #{workingOn}|"></h3>
 <ul th:class="project">

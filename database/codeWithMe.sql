@@ -99,11 +99,12 @@ CREATE TABLE projects (
                               CONSTRAINT applications_repositoryId FOREIGN KEY (repositoryId) REFERENCES repositories(repositoryId)
 );
 
-insert into projects (projectName, repositoryId) values ('project1_1',(select repositoryId from repositories where url = 'www.application1.be')),
-                                                                ('project1_2',(select repositoryId from repositories where url = 'www.application1.be')),
-                                                                ('project1_3',(select repositoryId from repositories where url = 'www.application1.be')),
-                                                                ('project2_1',(select repositoryId from repositories where url = 'www.application2.be')),
-                                                                ('project2_2',(select repositoryId from repositories where url = 'www.application2.be'));
+insert into projects (projectName, repositoryId)
+values  ('project1_1',(select repositoryId from repositories where url = 'www.application1.be')),
+        ('project1_2',(select repositoryId from repositories where url = 'www.application1.be')),
+        ('project1_3',(select repositoryId from repositories where url = 'www.application1.be')),
+        ('project2_1',(select repositoryId from repositories where url = 'www.application2.be')),
+        ('project2_2',(select repositoryId from repositories where url = 'www.application2.be'));
 
 CREATE TABLE projectMessages (
                                 projectMessageId int unsigned NOT NULL AUTO_INCREMENT primary key,
@@ -130,20 +131,25 @@ insert into userprojects(userSkillId, projectId) values (24,1),(31,3),(25,1),(34
 
 CREATE TABLE projectauthorities (
                                 projectAuthorityId int unsigned NOT NULL AUTO_INCREMENT primary key,
+                                projectId int unsigned NOT NULL,
                                 projectAuthority varchar(50) NOT NULL,
                                 version int unsigned DEFAULT 0
 );
 
+insert into projectauthorities(projectId,projectAuthority) values (1,'user'),(1,'admin'),(2,'user'),(2,'admin'),(3,'user'),(3,'admin'),(4,'user'),(4,'admin'),(5,'user'),(5,'admin');
+
 CREATE TABLE projectuserauthorities (
-                                projectId int unsigned NOT NULL,
-                                userId int unsigned NOT NULL,
-                                PRIMARY KEY (projectId, userId),
                                 projectAuthorityId int unsigned NOT NULL,
+                                userId int unsigned NOT NULL,
+                                PRIMARY KEY (projectAuthorityId, userId),
                                 version int unsigned DEFAULT 0,
-                                CONSTRAINT projectuserauthorities_projectId FOREIGN KEY (projectId) REFERENCES projects(projectId),
                                 CONSTRAINT projectuserauthorities_userId FOREIGN KEY (userId) REFERENCES users(id),
                                 CONSTRAINT projectuserauthorities_projectAuthorityId FOREIGN KEY (projectAuthorityId) REFERENCES projectauthorities(projectAuthorityId)
 );
+
+insert into projectuserauthorities (userId, projectAuthorityId)
+values(2,2),(2,4),(2,6),(2,8),(3,7),(3,10);
+
 CREATE TABLE requests (
                                 projectId int unsigned NOT NULL,
                                 userId int unsigned NOT NULL,
@@ -171,7 +177,7 @@ CREATE TABLE userroles (
                            CONSTRAINT userroles_userId FOREIGN KEY (userId) REFERENCES users(id)
 );
 
-INSERT INTO userroles (userId, roleId) VALUES (1,1),(2,2);
+INSERT INTO userroles (userId, roleId) VALUES (2,2),(3,1);
 
 create user if not exists cursist identified by 'Cursist11.';
 grant select,insert,update,delete on categories to cursist;

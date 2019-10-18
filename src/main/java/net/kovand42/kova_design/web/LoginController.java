@@ -1,7 +1,9 @@
 package net.kovand42.kova_design.web;
 
+import net.kovand42.kova_design.entities.Role;
 import net.kovand42.kova_design.entities.User;
 import net.kovand42.kova_design.forms.UserForm;
+import net.kovand42.kova_design.services.RoleService;
 import net.kovand42.kova_design.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +23,8 @@ import javax.validation.Valid;
 public class LoginController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleService roleService;
     private static final String VIEW = "login";
     private static final String REGISTRATION = "registration";
 
@@ -50,6 +54,8 @@ public class LoginController {
         User user = new User(userForm.getUsername(), userForm.getEmail(), new BCryptPasswordEncoder().encode(userForm.getPassword()), true);
         if(userForm.validatePaswoord(
                 userForm.getPassword(), userForm.getConfirmPassword())){
+            Role role = roleService.findByRoleName("user").get();
+            user.add(role);
             userService.create(user);
             authWithHttpServletRequest(request, userForm.getUsername(), userForm.getPassword());
             return new ModelAndView("redirect:/applications");

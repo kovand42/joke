@@ -23,26 +23,22 @@ public class JpaProjectService implements ProjectService {
     }
 
     @Override
-    //@Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public List<Project> findAll() {
         return projectRepository.findAll();
     }
 
     @Override
-    //@Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public Optional<Project> findById(long projectId) {
         return projectRepository.findById(projectId);
     }
 
     @Override
-    //@Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public List<Project> findByProjectName(String projectName) {
         return projectRepository
                 .findProjectByProjectName(projectName);
     }
 
     @Override
-    //@Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public List<Project> findByRepository(Repository repository) {
         return projectRepository
                 .findProjectByRepositoryOrderByProjectName(repository);

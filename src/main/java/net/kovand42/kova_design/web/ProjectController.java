@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Controller
 @RequestMapping("/projects")
@@ -44,6 +43,8 @@ public class ProjectController {
     RepositoryService repositoryService;
     @Autowired
     ProjectMessageService projectMessageService;
+    @Autowired
+    ProjectAuthorityService projectAuthorityService;
     @GetMapping
     ModelAndView projects(Principal principal){
         projectSkills.setClear();
@@ -65,6 +66,16 @@ public class ProjectController {
         messages.forEach(message -> {
             messagesMap.put(message, message.getUser());
         });
+        StringBuilder projectUserStringAuth = new StringBuilder();
+        List<ProjectAuthority> authList = projectAuthorityService.findAllByProject(project);
+        authList.forEach(projectAuthority -> {
+            if(projectAuthority.getUsersWithAuth().contains(user)){
+                projectUserStringAuth.append(projectAuthority.getProjectAuthority());
+                System.out.println(projectUserStringAuth.toString());
+            }
+        });
+        String projectUserAuth = projectUserStringAuth.toString();
+        modelAndView.addObject("projectAuthority", projectUserAuth);
         modelAndView.addObject("messageForm",
                 new ProjectMessageForm(project, userService.findByUsername(principal.getName()).get(), null));
         modelAndView.addObject("messagesMap", messagesMap);
