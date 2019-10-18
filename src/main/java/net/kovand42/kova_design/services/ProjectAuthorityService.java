@@ -11,4 +11,7 @@ public interface ProjectAuthorityService {
     List<ProjectAuthority> findAllByProject(Project project);
     List<ProjectAuthority> findByProjectAndAuthority(Project project, String authority);
     Optional<ProjectAuthority> findById(long id);
+    void create(ProjectAuthority projectAuthority);
+    void delete(ProjectAuthority projectAuthority);
+    void update(ProjectAuthority projectAuthority);
 }

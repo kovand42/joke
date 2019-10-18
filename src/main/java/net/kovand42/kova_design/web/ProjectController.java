@@ -57,38 +57,24 @@ public class ProjectController {
     ModelAndView project(@PathVariable long id, Principal principal){
         ModelAndView modelAndView = new ModelAndView("project");
         Project project = projectService.findById(id).get();
-        List<Skill> localProjectSkills = controllerFunctions.makeProjectSkills(project);
         List<User> users = controllerFunctions.makeProjectUserList(project);
         User user = userService.findByUsername(principal.getName()).get();
-        boolean cont = users.contains(user);
-        List<ProjectMessage> messages = projectMessageService.findByProject(project);
-        Map<ProjectMessage, User> messagesMap = new LinkedHashMap<>();
-        messages.forEach(message -> {
-            messagesMap.put(message, message.getUser());
-        });
-        StringBuilder projectUserStringAuth = new StringBuilder();
-        List<ProjectAuthority> authList = projectAuthorityService.findAllByProject(project);
-        authList.forEach(projectAuthority -> {
-            if(projectAuthority.getUsersWithAuth().contains(user)){
-                projectUserStringAuth.append(projectAuthority.getProjectAuthority());
-                System.out.println(projectUserStringAuth.toString());
-            }
-        });
-        String projectUserAuth = projectUserStringAuth.toString();
-        modelAndView.addObject("projectAuthority", projectUserAuth);
-        modelAndView.addObject("messageForm",
-                new ProjectMessageForm(project, userService.findByUsername(principal.getName()).get(), null));
-        modelAndView.addObject("messagesMap", messagesMap);
-        modelAndView.addObject("messages", messages);
-        modelAndView.addObject("cont", cont);
-        modelAndView.addObject("projectSkills", localProjectSkills);
-        modelAndView.addObject("lackingSkills", controllerFunctions.lackingProjectSkills(project));
-        modelAndView.addObject("user", user);
-        modelAndView.addObject("principal", principal);
-        modelAndView.addObject("users", users);
-        modelAndView.addObject("project", project);
-        modelAndView.addObject("lackingUserSkills", controllerFunctions.lackingUserSkills(project));
-        modelAndView.addObject("usersWithLackingProjectSkill", controllerFunctions.makeLackingSkillsUserList(project));
+        boolean cont = users.contains(user)||controllerFunctions.projectUserAuth(project, user).equals("admin");
+        modelAndView.addObject("principal", principal)
+                .addObject("user", user)
+                .addObject("project", project)
+                .addObject("users", users)
+                .addObject("projectAuthority", controllerFunctions.projectUserAuth(project, user))
+                .addObject("cont", cont)
+                .addObject("projectSkills", controllerFunctions.makeProjectSkills(project))
+                .addObject("lackingSkills", controllerFunctions.lackingProjectSkills(project))
+                .addObject("lackingUserSkills", controllerFunctions.lackingUserSkills(project))
+                .addObject("usersWithLackingProjectSkill", controllerFunctions.makeLackingSkillsUserList(project))
+                .addObject("messages", controllerFunctions.messages(project))
+                .addObject("messagesMap", controllerFunctions.userMessages(project, user))
+                .addObject("messageForm",
+                new ProjectMessageForm(project, userService.
+                        findByUsername(principal.getName()).get(), null));
         return modelAndView;
     }
     @GetMapping("newProject")
@@ -118,20 +104,14 @@ public class ProjectController {
                                    @RequestParam("projectId") long projectId,
                                    RedirectAttributes redirect){
         controllerFunctions.addSkillToProject(projectService.findById(projectId).get(), id);
-        StringBuilder strB = new StringBuilder();
-        strB.append("redirect:/projects/").append(projectId);
-        String redirectURL = strB.toString();
-        return new ModelAndView(redirectURL);
+        return new ModelAndView(controllerFunctions.redirectToProjectWithId(projectId));
     }
     @GetMapping("projectSkills/remove")
     ModelAndView removeSkill(@RequestParam("id") long id,
                              @RequestParam("projectId") long projectId,
                              RedirectAttributes redirect){
         controllerFunctions.removeSkillFromProject(projectService.findById(projectId).get(), id);
-        StringBuilder strB = new StringBuilder();
-        strB.append("redirect:/projects/").append(projectId);
-        String redirectURL = strB.toString();
-        return new ModelAndView(redirectURL);
+        return new ModelAndView(controllerFunctions.redirectToProjectWithId(projectId));
     }
     @GetMapping("newProjectSkills/remove")
     ModelAndView remove(@RequestParam("id") long id, RedirectAttributes redirect){

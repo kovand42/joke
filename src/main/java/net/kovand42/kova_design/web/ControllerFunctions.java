@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class ControllerFunctions {
@@ -29,6 +32,10 @@ public class ControllerFunctions {
     ProjectSkills projectSkills;
     @Autowired
     RepositoryService repositoryService;
+    @Autowired
+    ProjectAuthorityService projectAuthorityService;
+    @Autowired
+    ProjectMessageService projectMessageService;
     public List<Skill> makeSkillListFromUserForProfile(User user){
         List<UserSkill> userSkills = userSkillService.findByUser(user);
         List<Skill> skills = new LinkedList<>();
@@ -88,7 +95,16 @@ public class ControllerFunctions {
                 }
             });
         });
+        AtomicReference<Project> atomicProject = new AtomicReference<>();
         projectService.create(project);
+        projectService.findByProjectName(project.getProjectName()).forEach(project1 -> {
+            if(project1.getRepository().getUrl().equals(url)){
+                atomicProject.set(project1);
+            }
+        });
+        ProjectAuthority projectAuthority = new ProjectAuthority("admin", atomicProject.get());
+        projectAuthority.addUser(user);
+        projectAuthorityService.create(projectAuthority);
         skillsForNewProject.setClear();
     }
     public List<Skill> lackingSkills(User user){
@@ -146,25 +162,34 @@ public class ControllerFunctions {
         List<User> users = makeProjectUserList(project);
         projectSkills.add(id);
         AtomicInteger counter = new AtomicInteger();
-        users.forEach(user -> {
-            userSkillService.findByUser(user).forEach(userSkill -> {
-                if(userSkill.getSkill().getSkillId() == id){
-                    project.add(userSkill);
-                    counter.getAndIncrement();
-                }
-                if(counter.get()==0){
-                    userSkillService
-                            .findByUser(userService.findById(1).get())
-                            .forEach(userSkill1 -> {
-                                if(userSkill1.getSkill().getSkillId()==id){
-                                    project.add(userSkill1);
-                                }
-                            });
-                }
+        if(users.size()>0){
+            users.forEach(user -> {
+                userSkillService.findByUser(user).forEach(userSkill -> {
+                    if(userSkill.getSkill().getSkillId() == id){
+                        project.add(userSkill);
+                        counter.getAndIncrement();
+                    }
+                    if(counter.get()==0){
+                        putMasterUserSkillToSession(project, id);
+                    }
+                });
             });
-        });
+        }else{
+            putMasterUserSkillToSession(project, id);
+        }
         projectService.update(project);
     }
+
+    private void putMasterUserSkillToSession(Project project, long id){
+        userSkillService
+                .findByUser(userService.findById(1).get())
+                .forEach(userSkill1 -> {
+                    if(userSkill1.getSkill().getSkillId()==id){
+                        project.add(userSkill1);
+                    }
+                });
+    }
+
     public List<User> makeProjectUserList(Project project){
         List<User> users = new LinkedList<>();
         project.getUserSkills()
@@ -193,5 +218,33 @@ public class ControllerFunctions {
             }
         });
         return lackingUsers;
+    }
+    public String projectUserAuth(Project project, User user){
+        StringBuilder projectUserStringAuth = new StringBuilder();
+        List<ProjectAuthority> authList = projectAuthorityService.findAllByProject(project);
+        authList.forEach(projectAuthority -> {
+            if(projectAuthority.getUsersWithAuth().contains(user)){
+                projectUserStringAuth.append(projectAuthority.getProjectAuthority());
+            }
+        });
+        String auth = projectUserStringAuth.toString();
+        return auth;
+    }
+    public Map<ProjectMessage, User> userMessages(Project project, User user){
+        List<ProjectMessage> messages = projectMessageService.findByProject(project);
+        Map<ProjectMessage, User> messagesMap = new LinkedHashMap<>();
+        messages.forEach(message -> {
+            messagesMap.put(message, message.getUser());
+        });
+        return messagesMap;
+    }
+    public List<ProjectMessage> messages(Project project){
+        return projectMessageService.findByProject(project);
+    }
+    public String redirectToProjectWithId(long projectId){
+        StringBuilder strB = new StringBuilder();
+        strB.append("redirect:/projects/").append(projectId);
+        String redirectURL = strB.toString();
+        return redirectURL;
     }
 }
