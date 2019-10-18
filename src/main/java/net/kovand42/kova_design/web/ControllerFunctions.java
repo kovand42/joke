@@ -11,6 +11,7 @@ import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class ControllerFunctions {
@@ -144,10 +145,21 @@ public class ControllerFunctions {
     public void addSkillToProject(Project project, long id){
         List<User> users = makeProjectUserList(project);
         projectSkills.add(id);
+        AtomicInteger counter = new AtomicInteger();
         users.forEach(user -> {
             userSkillService.findByUser(user).forEach(userSkill -> {
                 if(userSkill.getSkill().getSkillId() == id){
                     project.add(userSkill);
+                    counter.getAndIncrement();
+                }
+                if(counter.get()==0){
+                    userSkillService
+                            .findByUser(userService.findById(1).get())
+                            .forEach(userSkill1 -> {
+                                if(userSkill1.getSkill().getSkillId()==id){
+                                    project.add(userSkill1);
+                                }
+                            });
                 }
             });
         });
