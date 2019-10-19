@@ -77,7 +77,7 @@ public class ProjectController {
                         findByUsername(principal.getName()).get(), null));
         return modelAndView;
     }
-    @GetMapping("newProject")
+    @GetMapping("/newProject")
     ModelAndView newProject(Principal principal){
         ModelAndView modelAndView = new ModelAndView("newProject");
         User user = userService.findByUsername(principal.getName()).get();
@@ -85,7 +85,7 @@ public class ProjectController {
         List<Skill> skillsInUse = new LinkedList<>();
         skillsForNewProject.getNewSkills().stream().forEach(id ->
                 skillsInUse.add(skillService.findById(id).get()));
-        modelAndView.addObject("empty", skillsInUse.isEmpty());
+        modelAndView.addObject("skillsInUseIsempty", skillsInUse.isEmpty());
         modelAndView.addObject("lackingSkills", controllerFunctions.lackingSkills(user));
         modelAndView.addObject("skillsInUse", skillsInUse);
         modelAndView.addObject("user", user);
@@ -120,28 +120,53 @@ public class ProjectController {
     }
     @PostMapping("create/repo")
     ModelAndView ceateRepo(@Valid RepositoryForm repositoryForm,
-            Errors errors, @RequestParam("projectName") String projectName,
-                           @RequestParam("url") String url,
+            Errors repoErrors, @RequestParam("projectName") String projectName,
                            RedirectAttributes redirect, Principal principal){
-        ModelAndView modelAndView = new ModelAndView("createProject");
-        if(errors.hasErrors()){
-            return modelAndView;
+        if(projectName.trim().equals(null)){
+            return new ModelAndView("redirect:/projects/newProject");
         }
-        Repository repository = new Repository(repositoryForm.getRepositoryName(), url);
+        if(repoErrors.hasErrors()){
+            System.out.println("errors: " + repoErrors.getFieldErrors().get(0));
+            StringBuilder urlToTemplate = new StringBuilder();
+            if(repositoryForm.getUrl()== null){
+                urlToTemplate = null;
+            }else{
+                urlToTemplate.append(repositoryForm.getUrl());
+            }
+            StringBuilder repoNameToTemplate = new StringBuilder();
+            if(repositoryForm.getRepositoryName()==null){
+                repoNameToTemplate = null;
+            }else {
+                repoNameToTemplate.append(repositoryForm.getRepositoryName());
+            }
+            String strUrl = urlToTemplate.toString();
+            String strRepo = repoNameToTemplate.toString();
+            return new ModelAndView("createProject")
+                    .addObject("projectName", projectName)
+                    .addObject(new RepositoryForm(strRepo, strUrl));
+        }
+        System.out.println("no errors");
+        Repository repository = new Repository(repositoryForm.getRepositoryName(), repositoryForm.getUrl()/*url*/);
         repositoryService.create(repository);
         controllerFunctions.makeProjectFromUrlAndProjectName(repositoryForm.getUrl(), projectName, principal);
         return new ModelAndView("redirect:/projects");
     }
-    @PostMapping("create")
-    ModelAndView create(@Valid ProjectForm projectForm, Errors appErrors,
+    @PostMapping("/create")
+    ModelAndView create(@Valid ProjectForm projectForm, Errors projectErrors,
                         @Valid RepositoryForm repositoryForm, Errors repoErrors,
                         RedirectAttributes redirect, Principal principal){
+        if(!(projectForm.getProjectName().trim().length()>0)){
+            return new ModelAndView("redirect:/projects/newProject");
+        }
+        ModelAndView modelAndView = new ModelAndView("createProject");
         if(repositoryService.findByUrl(repositoryForm.getUrl()).isPresent()){
             controllerFunctions.makeProjectFromUrlAndProjectName(repositoryForm.getUrl(), projectForm.getProjectName(), principal);
             return new ModelAndView("redirect:/projects");
         }
-        ModelAndView modelAndView = new ModelAndView("createProject")
-                .addObject("url", repositoryForm.getUrl())
+        if(projectErrors.hasErrors()){
+            return modelAndView.addObject("projectName", projectForm.getProjectName());
+        }
+        modelAndView.addObject("url", repositoryForm.getUrl())
                 .addObject("projectName", projectForm.getProjectName())
                 .addObject("repoForm", new RepositoryForm(null, repositoryForm.getUrl()));
        return modelAndView;

@@ -65,7 +65,7 @@
             <input th:field="*{projectName}" th:class="userProject"
                    type="text" th:name="projectName" autofocus required>
         </label>
-        <input th:class="${empty} ? 'none' :'userProject'" type="submit" th:value="#{createProject}">
+        <input th:class="${skillsInUseIsempty} == true ? 'none' :'userProject'" type="submit" th:value="#{createProject}">
         <input type="hidden" th:value="*{skillId}" th:name="id">
     </form>
 </div>

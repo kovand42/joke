@@ -9,6 +9,7 @@ public class RepositoryForm {
     @NotBlank
     private String repositoryName;
     @URL
+    @NotBlank
     private String url;
 
     public RepositoryForm(String repositoryName, String url) {

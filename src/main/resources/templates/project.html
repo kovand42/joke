@@ -5,81 +5,81 @@
 <nav th:replace="fragments::menu"></nav>
 <div th:class="left">
     <h3 th:text="|Authority in ${project.projectName}:  ${projectAuthority}|"></h3>
-<h1 th:text="${project.projectName}"></h1>
-<h3 th:text="|#{users} #{workingOn}|"></h3>
-<ul th:class="project">
-    <li th:each="user:${users}" th:object="${user}">
-        <a th:class="*{username} != 'master' ? 'registratie' : 'none'"
-           th:href="@{/profile/{id}(id=*{id})}"
-           th:text="*{username}"></a>
-    </li>
-</ul>
-<span th:class="container">
-    <h3 th:text="#{skills}"></h3>
-    <ul th:class="competenties">
-        <li th:each="skill:${lackingSkills}" th:object="${skill}">
-            <img th:class="logoContaier"
-                th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
-                th:alt="*{skillName}">
-            <form th:class="${cont} ? 'button':'none'"
-                  method="get" th:action="@{/projects/projectSkills}">
-                <input th:class="userProject" type="submit" th:value="#{add}">
-                <input type="hidden" th:value="*{skillId}" th:name="id">
-                <input type="hidden" th:value="${project.projectId}" th:name="projectId">
-            </form>
+    <h1 th:text="${project.projectName}"></h1>
+    <h3 th:text="|#{users} #{workingOn}|"></h3>
+    <ul th:class="project">
+        <li th:each="user:${users}" th:object="${user}">
+            <a th:class="*{username} != 'master' ? 'registratie' : 'none'"
+                th:href="@{/profile/{id}(id=*{id})}"
+                th:text="*{username}"></a>
         </li>
     </ul>
-</span>
-<span th:class="container">
-     <h3 th:text="#{projectSkills}"></h3>
-    <ul th:class="competenties">
-        <li th:each="skill:${projectSkills}" th:object="${skill}">
-            <img th:class="logoContaier"
-                 th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
-                 th:alt="*{skillName}">
-            <form th:class="${cont} ? 'button':'none'"
-                  method="get" th:action="@{/projects/projectSkills/remove}">
-                <input th:class="userProject" type="submit" th:value="#{remove}">
-                <input type="hidden" th:value="*{skillId}" th:name="id">
-                <input type="hidden" th:value="${project.projectId}" th:name="projectId">
-            </form>
-        </li>
-    </ul>
-</span>
-<span th:class="container">
-    <h3 th:text="#{lackingSkills}"></h3>
-    <ul th:class="competenties">
-        <li th:each="skill:${lackingUserSkills}" th:object="${skill}">
-            <a th:href="@{/skills/{id}(id=*{skillId})}">
+    <span th:class="container">
+        <h3 th:text="#{skills}"></h3>
+        <ul th:class="competenties">
+            <li th:each="skill:${lackingSkills}" th:object="${skill}">
                 <img th:class="logoContaier"
                     th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
                     th:alt="*{skillName}">
-            </a>
-            <form th:class="${cont} ? 'button':'none'"
-                  method="get" th:action="@{/projects/projectSkills/remove}">
-                <input th:class="userProject" type="submit" th:value="#{remove}">
-                <input type="hidden" th:value="*{skillId}" th:name="id">
-                <input type="hidden" th:value="${project.projectId}" th:name="projectId">
-            </form>
-        </li>
-    </ul>
-</span>
-<span th:class="container">
-     <h3 th:text="#{lackingUsers}"></h3>
-    <ul th:class="project">
-        <li th:each="user:${usersWithLackingProjectSkill}" th:object="${user}">
-            <a th:class="*{username} != 'master' ? 'registratie' : 'none'"
-               th:href="@{/profile/{id}(id=*{id})}"
-               th:text="*{username}"></a>
-        </li>
-    </ul>
-</span>
-<span th:class="${principal} != null ? 'container' : 'none'">
-    <form th:action="@{/projects/newProject}"
-          th:class="button" method='get'>
-        <input type='submit' th:value="#{makeNewProject}">
-    </form>
-</span>
+                <form th:class="${cont} ? 'button':'none'"
+                    method="get" th:action="@{/projects/projectSkills}">
+                    <input th:class="userProject" type="submit" th:value="#{add}">
+                    <input type="hidden" th:value="*{skillId}" th:name="id">
+                    <input type="hidden" th:value="${project.projectId}" th:name="projectId">
+                </form>
+            </li>
+        </ul>
+    </span>
+    <span th:class="container">
+        <h3 th:text="#{projectSkills}"></h3>
+        <ul th:class="competenties">
+            <li th:each="skill:${projectSkills}" th:object="${skill}">
+                <img th:class="logoContaier"
+                    th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
+                    th:alt="*{skillName}">
+                <form th:class="${cont} ? 'button':'none'"
+                    method="get" th:action="@{/projects/projectSkills/remove}">
+                    <input th:class="userProject" type="submit" th:value="#{remove}">
+                    <input type="hidden" th:value="*{skillId}" th:name="id">
+                    <input type="hidden" th:value="${project.projectId}" th:name="projectId">
+                </form>
+            </li>
+        </ul>
+    </span>
+    <span th:class="container">
+        <h3 th:text="#{lackingSkills}"></h3>
+        <ul th:class="competenties">
+            <li th:each="skill:${lackingUserSkills}" th:object="${skill}">
+                <a th:href="@{/skills/{id}(id=*{skillId})}">
+                    <img th:class="logoContaier"
+                        th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
+                        th:alt="*{skillName}">
+                </a>
+                <form th:class="${cont} ? 'button':'none'"
+                    method="get" th:action="@{/projects/projectSkills/remove}">
+                    <input th:class="userProject" type="submit" th:value="#{remove}">
+                    <input type="hidden" th:value="*{skillId}" th:name="id">
+                    <input type="hidden" th:value="${project.projectId}" th:name="projectId">
+                </form>
+            </li>
+        </ul>
+    </span>
+    <span th:class="container">
+        <h3 th:text="#{lackingUsers}"></h3>
+        <ul th:class="project">
+            <li th:each="user:${usersWithLackingProjectSkill}" th:object="${user}">
+                <a th:class="*{username} != 'master' ? 'registratie' : 'none'"
+                th:href="@{/profile/{id}(id=*{id})}"
+                th:text="*{username}"></a>
+            </li>
+        </ul>
+    </span>
+    <span th:class="${principal} != null ? 'container' : 'none'">
+        <form th:action="@{/projects/newProject}"
+            th:class="button" method='get'>
+            <input type='submit' th:value="#{makeNewProject}">
+        </form>
+    </span>
 </div>
 <div th:class="right">
     <span th:class="container">
