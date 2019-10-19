@@ -146,6 +146,21 @@ public class ControllerFunctions {
         });
         return projectSkillsLocale;
     }
+    public void deleteProject(Project project){
+        List<ProjectMessage> projectMessages = messages(project);
+        projectMessages.forEach(projectMessage -> {
+            projectMessageService.delete(projectMessage);
+        });
+        List<ProjectAuthority> projectAuthorities = new LinkedList<>();
+        projectAuthorityService.findAllByProject(project).forEach(projectAuthority -> {
+            projectAuthorities.add(projectAuthority);
+
+        });
+        projectAuthorities.forEach(projectAuthority -> {
+            projectAuthorityService.delete(projectAuthority);
+        });
+        projectService.delete(project);
+    }
     public void removeSkillFromProject(Project project, long skillId){
         List<User> users = makeProjectUserList(project);
         projectSkills.remove(skillId);
@@ -244,6 +259,12 @@ public class ControllerFunctions {
     public String redirectToProjectWithId(long projectId){
         StringBuilder strB = new StringBuilder();
         strB.append("redirect:/projects/").append(projectId);
+        String redirectURL = strB.toString();
+        return redirectURL;
+    }
+    public String redirectToProfileAfterDeleteProject(long id){
+        StringBuilder strB = new StringBuilder();
+        strB.append("redirect:/profile/").append(id);
         String redirectURL = strB.toString();
         return redirectURL;
     }

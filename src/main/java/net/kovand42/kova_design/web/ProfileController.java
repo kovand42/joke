@@ -115,8 +115,6 @@ public class ProfileController {
             if(!(userSkill.getUser().equals(user))
                     &&!(userSkill.getUser().getUsername().equals("master"))){
                 projectUsers.getAndIncrement();
-                System.out.println(projectUsers.get());
-                System.out.println(project.getProjectName());
             }
         });
         if(projectUsers.get()>0){
@@ -136,11 +134,12 @@ public class ProfileController {
     ModelAndView deleteProject(@RequestParam("id") long id,
                                    @RequestParam("projectId") long projectId,
                                    RedirectAttributes redirect){
-        redirect.addAttribute("id", id);
+        /*redirect.addAttribute("id", id);*/
         Project project = projectService.findById(projectId).get();
-        projectService.delete(project);
-        StringBuilder strb = new StringBuilder();
-        strb.append("redirect:/profile/").append(id);
-        return new ModelAndView(strb.toString());
+        controllerFunctions.deleteProject(project);
+        //projectService.delete(project);
+/*        StringBuilder strb = new StringBuilder();
+        strb.append("redirect:/profile/").append(id);*/
+        return new ModelAndView(controllerFunctions.redirectToProfileAfterDeleteProject(id));
     }
 }

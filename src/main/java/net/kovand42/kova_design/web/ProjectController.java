@@ -161,8 +161,6 @@ public class ProjectController {
         Project project = projectService.findById(projectId).get();
         String message = projectMessageForm.getMessage();
         LocalDateTime dateTime = LocalDateTime.now();
-        System.out.println(user.getUsername() + ", " + project.getProjectName() + ", " +
-                dateTime.toString() + ", " + message);
         ProjectMessage projectMessage = new ProjectMessage(project, user, dateTime, message);
         projectMessageService.create(projectMessage);
         return new ModelAndView(strB.toString());

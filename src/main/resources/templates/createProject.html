@@ -3,7 +3,6 @@
 <head th:replace="fragments::head(title=#{createProject})"></head>
 <body>
 <nav th:replace="fragments::menu"></nav>
-<h1>CREATE</h1>
 <div th:class="container" th:object="${repositoryForm}">
     <form method="post" th:action="@{/projects/create/repo}">
         <label>

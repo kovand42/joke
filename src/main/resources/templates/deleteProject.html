@@ -5,7 +5,6 @@
 <nav th:replace="fragments::menu"></nav>
 <h1 th:text="${user.username}"></h1>
 <h1 th:text="${project.projectName}"></h1>
-<h1 th:text="${bazeg}"></h1>
 <form method="post" th:action="@{/profile/deleteProject}">
     <input th:class="remove" type="submit" th:value="#{removeProject}">
     <input type="hidden" th:value="${project.projectId}" th:name="projectId">
