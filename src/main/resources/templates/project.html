@@ -15,22 +15,6 @@
         </li>
     </ul>
     <span th:class="container">
-        <h3 th:text="#{skills}"></h3>
-        <ul th:class="competenties">
-            <li th:each="skill:${lackingSkills}" th:object="${skill}">
-                <img th:class="logoContaier"
-                    th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
-                    th:alt="*{skillName}">
-                <form th:class="${cont} ? 'button':'none'"
-                    method="get" th:action="@{/projects/projectSkills}">
-                    <input th:class="userProject" type="submit" th:value="#{add}">
-                    <input type="hidden" th:value="*{skillId}" th:name="id">
-                    <input type="hidden" th:value="${project.projectId}" th:name="projectId">
-                </form>
-            </li>
-        </ul>
-    </span>
-    <span th:class="container">
         <h3 th:text="#{projectSkills}"></h3>
         <ul th:class="competenties">
             <li th:each="skill:${projectSkills}" th:object="${skill}">
@@ -74,6 +58,22 @@
             </li>
         </ul>
     </span>
+    <span th:class="container">
+        <h3 th:text="#{skills}"></h3>
+        <ul th:class="competenties">
+            <li th:each="skill:${lackingSkills}" th:object="${skill}">
+                <img th:class="logoContaier"
+                     th:src="@{/images/logo/{skillName}.png(skillName=*{skillName})}"
+                     th:alt="*{skillName}">
+                <form th:class="${cont} ? 'button':'none'"
+                      method="get" th:action="@{/projects/projectSkills}">
+                    <input th:class="userProject" type="submit" th:value="#{add}">
+                    <input type="hidden" th:value="*{skillId}" th:name="id">
+                    <input type="hidden" th:value="${project.projectId}" th:name="projectId">
+                </form>
+            </li>
+        </ul>
+    </span>
     <span th:class="${principal} != null ? 'container' : 'none'">
         <form th:action="@{/projects/newProject}"
             th:class="button" method='get'>
@@ -84,36 +84,36 @@
 <div th:class="right">
     <span th:class="container">
         <h3 th:text="#{messages}"></h3>
-    <ul>
-        <li th:each="message:${messagesMap}" th:object="${message}">
-            <ul th:class="container">
-                <li>
-                    <h5 th:text="*{value.username}">
-                <li>
-                    <h5 th:text="*{key.messageDateTimeString}"></h5>
-                </li>
-                <li>
-                    <h3 th:text="*{key.message}"></h3>
-                </li>
-            </ul>
-        </li>
-        <li th:class="container">
-            <form method="post" th:action="@{/projects/postMessage}">
-                <label th:object="${messageForm}">
-                    <span th:text="#{writeYourMessage}"></span>
-                    <span th:errors="*{message}"></span>
-                    <input th:field="*{message}" th:class="userProject"
-                           type="text" autofocus required>
-                    <input type="hidden" th:field="*{user}" th:value="${user}">
-                    <input type="hidden" th:field="*{project}" th:value="${project}">
-                </label>
-                <input type="submit" th:value="#{send}">
-                <input type="hidden" th:value="${user.id}" th:name="id">
-                <input type="hidden" th:value="${project.projectId}" th:name="projectId">
-            </form>
-        </li>
-    </ul>
-        </span>
+        <ul>
+            <li th:each="message:${messagesMap}" th:object="${message}">
+                <ul th:class="container">
+                    <li>
+                        <h5 th:text="*{value.username}">
+                    <li>
+                        <h5 th:text="*{key.messageDateTimeString}"></h5>
+                    </li>
+                    <li>
+                        <h3 th:text="*{key.message}"></h3>
+                    </li>
+                </ul>
+            </li>
+            <li th:class="container">
+                <form method="post" th:action="@{/projects/postMessage}">
+                    <label th:object="${messageForm}">
+                        <span th:text="#{writeYourMessage}"></span>
+                        <span th:errors="*{message}"></span>
+                        <input th:field="*{message}" th:class="userProject"
+                               type="text" autofocus required>
+                        <input type="hidden" th:field="*{user}" th:value="${user}">
+                        <input type="hidden" th:field="*{project}" th:value="${project}">
+                    </label>
+                    <input type="submit" th:value="#{send}">
+                    <input type="hidden" th:value="${user.id}" th:name="id">
+                    <input type="hidden" th:value="${project.projectId}" th:name="projectId">
+                </form>
+            </li>
+        </ul>
+    </span>
 </div>
 </body>
 </html>

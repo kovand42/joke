@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -78,13 +79,18 @@ public class ProjectController {
         return modelAndView;
     }
     @GetMapping("/newProject")
-    ModelAndView newProject(Principal principal){
+    ModelAndView newProject(Principal principal, HttpSession session){
         ModelAndView modelAndView = new ModelAndView("newProject");
         User user = userService.findByUsername(principal.getName()).get();
         List<Skill> principalSkills = controllerFunctions.makeSkillListFromUserForProject(user);
         List<Skill> skillsInUse = new LinkedList<>();
         skillsForNewProject.getNewSkills().stream().forEach(id ->
                 skillsInUse.add(skillService.findById(id).get()));
+        if(session.getAttribute("mess") != null){
+            modelAndView.addObject("mess", session.getAttribute("message"));
+        }else{
+            modelAndView.addObject("mess",null);
+        }
         modelAndView.addObject("skillsInUseIsempty", skillsInUse.isEmpty());
         modelAndView.addObject("lackingSkills", controllerFunctions.lackingSkills(user));
         modelAndView.addObject("skillsInUse", skillsInUse);
@@ -121,8 +127,9 @@ public class ProjectController {
     @PostMapping("create/repo")
     ModelAndView ceateRepo(@Valid RepositoryForm repositoryForm,
             Errors repoErrors, @RequestParam("projectName") String projectName,
-                           RedirectAttributes redirect, Principal principal){
+                           RedirectAttributes redirect, Principal principal, HttpSession session){
         if(projectName.trim().equals(null)){
+            session.setAttribute("mess", "projectNameIsEmpty");
             return new ModelAndView("redirect:/projects/newProject");
         }
         if(repoErrors.hasErrors()){
@@ -143,10 +150,10 @@ public class ProjectController {
             String strRepo = repoNameToTemplate.toString();
             return new ModelAndView("createProject")
                     .addObject("projectName", projectName)
-                    .addObject(new RepositoryForm(strRepo, strUrl));
+                    .addObject(new RepositoryForm(strRepo, strUrl)).addObject("errors", repoErrors);
         }
         System.out.println("no errors");
-        Repository repository = new Repository(repositoryForm.getRepositoryName(), repositoryForm.getUrl()/*url*/);
+        Repository repository = new Repository(repositoryForm.getRepositoryName(), repositoryForm.getUrl());
         repositoryService.create(repository);
         controllerFunctions.makeProjectFromUrlAndProjectName(repositoryForm.getUrl(), projectName, principal);
         return new ModelAndView("redirect:/projects");
@@ -154,8 +161,9 @@ public class ProjectController {
     @PostMapping("/create")
     ModelAndView create(@Valid ProjectForm projectForm, Errors projectErrors,
                         @Valid RepositoryForm repositoryForm, Errors repoErrors,
-                        RedirectAttributes redirect, Principal principal){
+                        RedirectAttributes redirect, Principal principal, HttpSession session){
         if(!(projectForm.getProjectName().trim().length()>0)){
+            session.setAttribute("mess", "projectNameIsEmpty");
             return new ModelAndView("redirect:/projects/newProject");
         }
         ModelAndView modelAndView = new ModelAndView("createProject");

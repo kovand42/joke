@@ -8,13 +8,13 @@
     <form method="post" th:action="@{/projects/create/repo}">
         <label>
             <span th:text="'repo url'"></span>
-            <span th:errors="*{url}"></span>
+            <span th:class="'faut'" th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></span>
             <input th:field="*{url}" th:class="userProject"
                    type="text" autofocus required>
         </label>
         <label>
             <span th:text="'repo name'"></span>
-            <span th:errors="*{repositoryName}"></span>
+            <span th:class="${#fields.hasErrors('repositoryName')} == null ? 'none' : 'faut'" th:errors="*{repositoryName}"></span>
             <input th:field="*{repositoryName}" th:class="userProject"
                    type="text" autofocus required>
             <input type="hidden" th:value="${projectName}" th:name="projectName">

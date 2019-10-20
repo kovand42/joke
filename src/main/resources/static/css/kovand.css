@@ -292,7 +292,7 @@ ul>li>a {
 	display: block;
 	text-align: center;
 }
-label span, .fout {
+.faut {
 	background-color: red;
 	border-bottom-right-radius: 0.5em;
 	border-top-left-radius: 0.5em;
@@ -302,4 +302,8 @@ label span, .fout {
 	padding: 0.5em;
 	color: white;
 	font-weight: bold;
+}
+
+label span:empty, .faut:empty {
+	display: none;
 }
