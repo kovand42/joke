@@ -16,23 +16,46 @@
             </a>
         </li>
     </ul>
-<div th:if="${requests} != null" th:class="container">
-    <ul>
-        <li>
-            <h3>Requests: </h3>
-        </li>
-        <li th:each="request:${requests}" th:object="${request}">
-            <h3 th:text="|*{project.projectName}, |"></h3>
-            <h3 th:text="|*{user.username}, |"></h3>
-            <h3 th:text="|invitation:  *{invitation}|"></h3>
-            <form method="post" th:action="@{/profile/addProjects/add}">
-                <input th:class="remove" type="submit" th:value="#{add}">
-                <input type="hidden" th:value="*{project.projectId}" th:name="projectId">
-                <input type="hidden" th:value="*{user.id}" th:name="id">
-            </form>
-        </li>
-    </ul>
-</div>
+    <span th:if="${requests} != null" th:class="container">
+        <ul>
+            <li>
+                <h3>Sent requests to users: </h3>
+            </li>
+            <li th:each="request:${requests}" th:object="${request}">
+                <h3 th:text="|*{project.projectName}, |"></h3>
+                <h3 th:text="|*{user.username}, |"></h3>
+                <h3 th:text="|invitation:  *{invitation}|"></h3>
+                <form method="post" th:action="@{/profile/deleteRequest}">
+                    <input th:class="remove" type="submit" th:value="#{remove}">
+                    <input type="hidden" th:value="*{project.projectId}" th:name="projectId">
+                    <input type="hidden" th:value="*{user.id}" th:name="id">
+                </form>
+            </li>
+        </ul>
+    </span>
+    <span th:if="${applyRequests} != null" th:class="container">
+        <ul>
+            <li>
+                <h3>Sent requests to projects: </h3>
+            </li>
+            <li th:each="request:${applyRequests}" th:object="${request}">
+                <h3 th:text="|*{project.projectName}, |"></h3>
+                <h3 th:text="|*{user.username}, |"></h3>
+                <h3 th:text="|invitation:  *{invitation}|"></h3>
+                <form th:if="${principal} != *{user.username}"
+                      method="post" th:action="@{/profile/addProjects/add}">
+                    <input th:class="remove" type="submit" th:value="#{accept}">
+                    <input type="hidden" th:value="*{project.projectId}" th:name="projectId">
+                    <input type="hidden" th:value="*{user.id}" th:name="id">
+                </form>
+                <form method="post" th:action="@{/profile/deleteRequest}">
+                    <input th:class="remove" type="submit" th:value="#{refuse}">
+                    <input type="hidden" th:value="*{project.projectId}" th:name="projectId">
+                    <input type="hidden" th:value="*{user.id}" th:name="id">
+                </form>
+            </li>
+        </ul>
+    </span>
 </div>
 <div th:class="userProjects">
     <ul>

@@ -89,9 +89,19 @@ public class ControllerFunctions {
         Project project = new Project(projectName, repository);
         User user = userService.findByUsername(principal.getName()).get();
         skillsForNewProject.getNewSkills().stream().forEach(id -> {
+            AtomicInteger counter = new AtomicInteger();
             userSkillService.findBySkill(skillService.findById(id).get()).forEach(userSkill -> {
                 if(userSkill.getUser().equals(user)){
                     project.add(userSkill);
+                    counter.getAndIncrement();
+                }
+                if(counter.get()==0){
+                    userSkillService.findByUser(userService.findByUsername("master").get())
+                            .forEach(userSkill1 -> {
+                                if (userSkill1.getSkill().equals(userSkill.getSkill())){
+                                    project.add(userSkill1);
+                                }
+                            });
                 }
             });
         });

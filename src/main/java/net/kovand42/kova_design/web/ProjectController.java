@@ -63,9 +63,32 @@ public class ProjectController {
         List<User> users = controllerFunctions.makeProjectUserList(project);
         User user = userService.findByUsername(principal.getName()).get();
         boolean cont = users.contains(user)||controllerFunctions.projectUserAuth(project, user).equals("admin");
-        List<Request> requests = requestService.findByProjectAndUser(project, user);
+        List<Request> requests = requestService.findByProject(project);
+        List<Request> invitationRequests = new LinkedList<>();
+        List<Request> notInvitationRequests = new LinkedList<>();
+        List<User> invitedUsers = new LinkedList<>();
+        requestService.findByProject(project).forEach(request -> {
+            if(request.isInvitation()){
+                invitationRequests.add(request);
+                invitedUsers.add(request.getUser());
+            }else {
+                notInvitationRequests.add(request);
+            }
+        });
+        List<User> usersAlreadyApplied = new LinkedList<>();
+        notInvitationRequests.forEach(request -> {
+            usersAlreadyApplied.add(request.getUser());
+        });
+        boolean isUserInvited = false;
+        if(invitedUsers.contains(user)||users.contains(user)||usersAlreadyApplied.contains(user)){
+            isUserInvited = true;
+        }
+        List<User> notInvitedUsersWithLackingSkills = controllerFunctions.makeLackingSkillsUserList(project);
+        notInvitedUsersWithLackingSkills.removeAll(invitedUsers);
         modelAndView.addObject("principal", principal)
-                .addObject("requests", requests)
+                .addObject("requests", notInvitationRequests)
+                .addObject("isUserInvited", isUserInvited)
+                .addObject("invitationRequests", invitationRequests)
                 .addObject("user", user)
                 .addObject("project", project)
                 .addObject("users", users)
@@ -74,7 +97,7 @@ public class ProjectController {
                 .addObject("projectSkills", controllerFunctions.makeProjectSkills(project))
                 .addObject("lackingSkills", controllerFunctions.lackingProjectSkills(project))
                 .addObject("lackingUserSkills", controllerFunctions.lackingUserSkills(project))
-                .addObject("usersWithLackingProjectSkill", controllerFunctions.makeLackingSkillsUserList(project))
+                .addObject("usersWithLackingProjectSkill", notInvitedUsersWithLackingSkills)
                 .addObject("messages", controllerFunctions.messages(project))
                 .addObject("messagesMap", controllerFunctions.userMessages(project, user))
                 .addObject("messageForm",

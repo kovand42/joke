@@ -56,10 +56,23 @@ public class ProfileController {
             requests.addAll(requestService.findByProject(project));
         });
         System.out.println(requests.size());
+        List<Request> applyRequests = new LinkedList<>();
+        List<Request> invitationRequests = new LinkedList<>();
+        List<Project> allProjects = projectService.findAll();
+        allProjects.forEach(project -> {
+            applyRequests.addAll(requestService.findByProjectAndUser(project, user));
+        });
+        requests.forEach(request -> {
+            if(request.isInvitation()){
+                invitationRequests.add(request);
+            }else{
+                applyRequests.add(request);
+            }
+        });
         ModelAndView modelAndView = new ModelAndView("profile")
                 .addObject("user", userService.findById(id).get());
-        modelAndView.addObject("requests", requests);
-        modelAndView.addObject("requests", requests);
+        modelAndView.addObject("applyRequests", applyRequests);
+        modelAndView.addObject("requests", invitationRequests);
         modelAndView.addObject("skills", skills);
         modelAndView.addObject("projects", projects);
         modelAndView.addObject("principal", principal.getName());
@@ -102,12 +115,26 @@ public class ProfileController {
     @PostMapping("/makeRequest")
     ModelAndView makeRequest(@RequestParam("id") long id,
                              @RequestParam("projectId") long projectId,
+                             @RequestParam("invitation") boolean invitation,
                              RedirectAttributes redirect){
         Project project = projectService.findById(projectId).get();
         User user = userService.findById(id).get();
-        requestService.create(new Request(project, user, false));
+        requestService.create(new Request(project, user, invitation));
         StringBuilder strB = new StringBuilder();
         strB.append("redirect:/profile/").append(id);
+        String URI = strB.toString();
+        return new ModelAndView(URI);
+    }
+    @PostMapping("/deleteRequest")
+        ModelAndView deleteRequest(@RequestParam("id") long id,
+                                   @RequestParam("projectId") long projectId,
+                                   RedirectAttributes redirect, Principal principal){
+            Project project = projectService.findById(projectId).get();
+            User user = userService.findById(id).get();
+        requestService.delete(requestService.findByProjectAndUser(project, user).get(0));
+        long principalId = userService.findByUsername(principal.getName()).get().getId();
+        StringBuilder strB = new StringBuilder();
+        strB.append("redirect:/profile/").append(principalId);
         String URI = strB.toString();
         return new ModelAndView(URI);
     }

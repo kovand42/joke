@@ -64,7 +64,6 @@
             <span th:text="#{projectName}"></span>
             <span th:class="${#fields.hasErrors('projectName')} == null ? 'none' : 'faut'"
                   th:errors="*{projectName}"></span>
-          <!--  <span th:class="#{${mess}} != null ? 'faut' : 'none'" th:text="#{${mess}} != null ? #{${mess}} : 'no message'"></span>-->
             <input th:field="*{projectName}" th:class="userProject"
                    type="text" th:name="projectName" autofocus required>
         </label>
