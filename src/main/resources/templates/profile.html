@@ -16,6 +16,7 @@
             </a>
         </li>
     </ul>
+<div th:if="${requests} != null" th:class="container">
     <ul>
         <li>
             <h3>Requests: </h3>
@@ -24,8 +25,14 @@
             <h3 th:text="|*{project.projectName}, |"></h3>
             <h3 th:text="|*{user.username}, |"></h3>
             <h3 th:text="|invitation:  *{invitation}|"></h3>
+            <form method="post" th:action="@{/profile/addProjects/add}">
+                <input th:class="remove" type="submit" th:value="#{add}">
+                <input type="hidden" th:value="*{project.projectId}" th:name="projectId">
+                <input type="hidden" th:value="*{user.id}" th:name="id">
+            </form>
         </li>
     </ul>
+</div>
 </div>
 <div th:class="userProjects">
     <ul>

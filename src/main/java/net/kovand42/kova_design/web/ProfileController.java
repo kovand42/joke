@@ -99,12 +99,26 @@ public class ProfileController {
         redirect.addAttribute("id", id);
         return new ModelAndView("redirect:/profile/addSkills");
     }
+    @PostMapping("/makeRequest")
+    ModelAndView makeRequest(@RequestParam("id") long id,
+                             @RequestParam("projectId") long projectId,
+                             RedirectAttributes redirect){
+        Project project = projectService.findById(projectId).get();
+        User user = userService.findById(id).get();
+        requestService.create(new Request(project, user, false));
+        StringBuilder strB = new StringBuilder();
+        strB.append("redirect:/profile/").append(id);
+        String URI = strB.toString();
+        return new ModelAndView(URI);
+    }
     @PostMapping("/addProjects/add")
     ModelAndView saveAddProject(@RequestParam("id") long id,
                                     @RequestParam("projectId") long projectId,
-                                    RedirectAttributes redirect){
+                                    RedirectAttributes redirect, Principal principal){
         Project project = projectService.findById(projectId).get();
+        System.out.println(project.getProjectName());
         User user = userService.findById(id).get();
+        System.out.println(user.getUsername());
         Set<UserSkill> projectUserSkills = project.getUserSkills();
         List<UserSkill> userSkills = userSkillService.findByUser(user);
         Set<UserSkill> userSkillsInUse = new LinkedHashSet<>();
@@ -118,10 +132,13 @@ public class ProfileController {
         userSkillsInUse.stream().forEach(userSkill -> {
             project.add(userSkill);
         });
-        requestService.create(new Request(project, user, false));
         projectService.update(project);
-        redirect.addAttribute("id", id);
-        return new ModelAndView("redirect:/profile/addProjects");
+        requestService.delete(requestService.findByProjectAndUser(project, user).get(0));
+        long principalId = userService.findByUsername(principal.getName()).get().getId();
+        StringBuilder strB = new StringBuilder();
+        strB.append("redirect:/profile/").append(principalId);
+        String URI = strB.toString();
+        return new ModelAndView(URI);
     }
     @PostMapping("/removeProject")
     ModelAndView removeProject(@RequestParam("projectId") long projectId,
