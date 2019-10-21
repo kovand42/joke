@@ -151,9 +151,9 @@ insert into projectuserauthorities (userId, projectAuthorityId)
 values(2,2),(2,4),(2,6),(2,8),(3,7),(3,10);
 
 CREATE TABLE requests (
+                                requestId int unsigned NOT NULL AUTO_INCREMENT primary key,
                                 projectId int unsigned NOT NULL,
                                 userId int unsigned NOT NULL,
-                                PRIMARY KEY (projectId,userId),
                                 invitation tinyint DEFAULT 0,
                                 version int unsigned DEFAULT 0,
                                 CONSTRAINT requests_projectId FOREIGN KEY (projectId) REFERENCES projects(projectId),

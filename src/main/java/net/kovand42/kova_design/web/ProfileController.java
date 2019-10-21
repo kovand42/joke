@@ -1,13 +1,7 @@
 package net.kovand42.kova_design.web;
 
-import net.kovand42.kova_design.entities.Project;
-import net.kovand42.kova_design.entities.Skill;
-import net.kovand42.kova_design.entities.User;
-import net.kovand42.kova_design.entities.UserSkill;
-import net.kovand42.kova_design.services.ProjectService;
-import net.kovand42.kova_design.services.SkillService;
-import net.kovand42.kova_design.services.UserService;
-import net.kovand42.kova_design.services.UserSkillService;
+import net.kovand42.kova_design.entities.*;
+import net.kovand42.kova_design.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,13 +29,37 @@ public class ProfileController {
     ProjectService projectService;
     @Autowired
     SkillService skillService;
+    @Autowired
+    RequestService requestService;
+    @Autowired
+    ProjectAuthorityService projectAuthorityService;
     @GetMapping("/{id}")
     ModelAndView profile(@PathVariable long id, Principal principal){
         User user = userService.findById(id).get();
         List<Project> projects = controllerFunctions.makeProjectListFromUser(user);
         List<Skill> skills = controllerFunctions.makeSkillListFromUserForProfile(user);
+        List<Request> requests = new LinkedList<>();
+        List<ProjectAuthority> projectAuthorities = new LinkedList<>();
+        projects.forEach(project -> {
+            requests.addAll(requestService.findByProjectAndUser(project, user));
+            projectAuthorities.addAll(projectAuthorityService.findAllByProject(project));
+        });
+        List<Project> userProjectsWithAdminAuth = new LinkedList<>();
+        projectAuthorities.forEach(projectAuthority -> {
+            if(projectAuthority.getUsersWithAuth().contains(user)&&
+                    projectAuthority.getProjectAuthority().equals("admin")){
+                userProjectsWithAdminAuth.add(projectAuthority.getProject());
+            }
+        });
+        System.out.println(userProjectsWithAdminAuth.size());
+        userProjectsWithAdminAuth.forEach(project -> {
+            requests.addAll(requestService.findByProject(project));
+        });
+        System.out.println(requests.size());
         ModelAndView modelAndView = new ModelAndView("profile")
                 .addObject("user", userService.findById(id).get());
+        modelAndView.addObject("requests", requests);
+        modelAndView.addObject("requests", requests);
         modelAndView.addObject("skills", skills);
         modelAndView.addObject("projects", projects);
         modelAndView.addObject("principal", principal.getName());
@@ -82,7 +100,7 @@ public class ProfileController {
         return new ModelAndView("redirect:/profile/addSkills");
     }
     @PostMapping("/addProjects/add")
-    ModelAndView saveAddApplication(@RequestParam("id") long id,
+    ModelAndView saveAddProject(@RequestParam("id") long id,
                                     @RequestParam("projectId") long projectId,
                                     RedirectAttributes redirect){
         Project project = projectService.findById(projectId).get();
@@ -100,6 +118,7 @@ public class ProfileController {
         userSkillsInUse.stream().forEach(userSkill -> {
             project.add(userSkill);
         });
+        requestService.create(new Request(project, user, false));
         projectService.update(project);
         redirect.addAttribute("id", id);
         return new ModelAndView("redirect:/profile/addProjects");

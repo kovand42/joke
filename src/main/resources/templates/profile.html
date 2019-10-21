@@ -16,6 +16,16 @@
             </a>
         </li>
     </ul>
+    <ul>
+        <li>
+            <h3>Requests: </h3>
+        </li>
+        <li th:each="request:${requests}" th:object="${request}">
+            <h3 th:text="|*{project.projectName}, |"></h3>
+            <h3 th:text="|*{user.username}, |"></h3>
+            <h3 th:text="|invitation:  *{invitation}|"></h3>
+        </li>
+    </ul>
 </div>
 <div th:class="userProjects">
     <ul>

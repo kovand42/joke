@@ -4,7 +4,6 @@ import net.kovand42.kova_design.entities.Project;
 import net.kovand42.kova_design.entities.Request;
 import net.kovand42.kova_design.entities.User;
 import net.kovand42.kova_design.repositories.RequestRepository;
-import net.kovand42.kova_design.valueobjects.RequestIdentity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,17 +27,22 @@ public class JpaRequestService implements RequestService {
 
     @Override
     public List<Request> findByProject(Project project) {
-        return requestRepository.findRequestsByRequestIdentityProjectOrderByRequestIdentity(project);
+        return requestRepository.findRequestsByProjectOrderByProject(project);
     }
 
     @Override
     public List<Request> findByUser(User user) {
-        return requestRepository.findRequestsByRequestIdentityUserOrderByRequestIdentity(user);
+        return requestRepository.findRequestsByUserOrderByUser(user);
     }
 
     @Override
-    public Optional<Request> findByReqIdentity(RequestIdentity identity) {
-        return requestRepository.findById(identity);
+    public List<Request> findByProjectAndUser(Project project, User user) {
+        return requestRepository.findRequestsByProjectAndUser(project, user);
+    }
+
+    @Override
+    public Optional<Request> findById(long id) {
+        return requestRepository.findById(id);
     }
 
     @Override

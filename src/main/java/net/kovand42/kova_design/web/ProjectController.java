@@ -46,6 +46,8 @@ public class ProjectController {
     ProjectMessageService projectMessageService;
     @Autowired
     ProjectAuthorityService projectAuthorityService;
+    @Autowired
+    RequestService requestService;
     @GetMapping
     ModelAndView projects(Principal principal){
         projectSkills.setClear();
@@ -61,7 +63,9 @@ public class ProjectController {
         List<User> users = controllerFunctions.makeProjectUserList(project);
         User user = userService.findByUsername(principal.getName()).get();
         boolean cont = users.contains(user)||controllerFunctions.projectUserAuth(project, user).equals("admin");
+        List<Request> requests = requestService.findByProjectAndUser(project, user);
         modelAndView.addObject("principal", principal)
+                .addObject("requests", requests)
                 .addObject("user", user)
                 .addObject("project", project)
                 .addObject("users", users)
