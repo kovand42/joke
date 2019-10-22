@@ -269,6 +269,7 @@ ul>li>a {
 	list-style: none;
 	max-height: 600px;
 	overflow: scroll;
+	float: right;
 }
 .weather {
 	text-align: center;
@@ -307,3 +308,4 @@ ul>li>a {
 label span:empty, .faut:empty {
 	display: none;
 }
+

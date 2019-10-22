@@ -22,7 +22,7 @@
             </form>
         </li>
     </ul>
-    <span th:if="${requests} != null" th:class="container">
+    <span th:if="${requestsLenght} > 0" th:class="container">
         <ul>
             <li>
                 <h3>Sent requests to project: </h3>
@@ -37,8 +37,8 @@
                     <input type="hidden" th:value="*{project.projectId}" th:name="projectId">
                     <input type="hidden" th:value="*{user.id}" th:name="id">
                 </form>
-                <form th:if="${projectAuthority} == 'admin'"
-                      method="post" th:action="@{/profile/addProjects/add}">
+                <form th:if="${projectAuthority} == 'admin' or ${user.username} == *{user.username}"
+                      method="post" th:action="@{/profile//deleteRequest}">
                     <input th:class="remove" type="submit" th:value="#{refuse}">
                     <input type="hidden" th:value="*{project.projectId}" th:name="projectId">
                     <input type="hidden" th:value="*{user.id}" th:name="id">
@@ -46,7 +46,7 @@
             </li>
         </ul>
     </span>
-    <span th:class="${invitationRequests} != null ? 'container' : 'none'">
+    <span th:class="${invitationRequestsLength} > 0 ? 'container' : 'none'">
         <ul>
             <li>
                 <h3>Sent requests to user: </h3>
@@ -62,7 +62,7 @@
                     <input type="hidden" th:value="*{user.id}" th:name="id">
                 </form>
                 <form th:if="*{user.username} == ${user.username} or ${projectAuthority} == 'admin'"
-                        method="post" th:action="@{/profile/addProjects/add}">
+                        method="post" th:action="@{/profile/deleteRequest}">
                     <input th:class="remove" type="submit" th:value="#{refuse}">
                     <input type="hidden" th:value="*{project.projectId}" th:name="projectId">
                     <input type="hidden" th:value="*{user.id}" th:name="id">
@@ -70,7 +70,7 @@
             </li>
         </ul>
     </span>
-    <span th:class="container">
+    <span th:class="${projectSkillsLength} > 0 ? 'container' : 'none'">
         <h3 th:text="#{projectSkills}"></h3>
         <ul th:class="competenties">
             <li th:each="skill:${projectSkills}" th:object="${skill}">
@@ -86,7 +86,7 @@
             </li>
         </ul>
     </span>
-    <span th:class="container">
+    <span th:class="${lackingUserSkillsLength} > 0 ? 'container' : 'none'">
         <h3 th:text="#{lackingSkills}"></h3>
         <ul th:class="competenties">
             <li th:each="skill:${lackingUserSkills}" th:object="${skill}">
@@ -104,24 +104,24 @@
             </li>
         </ul>
     </span>
-    <span th:class="container">
+    <span th:class="${usersWithLackingProjectSkillLength} > 0 ? 'container' : 'none'">
         <h3 th:text="#{lackingUsers}"></h3>
         <ul th:class="project">
             <li th:each="user:${usersWithLackingProjectSkill}" th:object="${user}">
                 <a th:class="*{username} != 'master' ? 'registratie' : 'none'"
                 th:href="@{/profile/{id}(id=*{id})}"
                 th:text="*{username}"></a>
-                    <form th:if="${projectAuthority} == 'admin'"
-                                      method="post" th:action="@{/profile/makeRequest}">
-                        <input th:class="remove" type="submit" th:value="#{add}">
-                        <input type="hidden" th:value="${project.projectId}" th:name="projectId">
-                        <input type="hidden" th:value="*{id}" th:name="id">
-                        <input type="hidden" th:value="true" th:name="invitation">
+                <form th:if="${projectAuthority} == 'admin'"
+                      method="post" th:action="@{/profile/makeRequest}">
+                    <input th:class="remove" type="submit" th:value="#{add}">
+                    <input type="hidden" th:value="${project.projectId}" th:name="projectId">
+                    <input type="hidden" th:value="*{id}" th:name="id">
+                    <input type="hidden" th:value="true" th:name="invitation">
                 </form>
             </li>
         </ul>
     </span>
-    <span th:class="container">
+    <span th:class="${lackingSkillsLength} > 0 ? 'container' : 'none'">
         <h3 th:text="#{skills}"></h3>
         <ul th:class="competenties">
             <li th:each="skill:${lackingSkills}" th:object="${skill}">
@@ -173,6 +173,25 @@
                     <input type="submit" th:value="#{send}">
                     <input type="hidden" th:value="${user.id}" th:name="id">
                     <input type="hidden" th:value="${project.projectId}" th:name="projectId">
+                </form>
+            </li>
+        </ul>
+    </span>
+    <span th:class="${allUsersLength} > 0 ? 'container' : 'none'">
+        <ul th:class="userInvitation">
+            <li>
+                <h3 th:text="#{users}"></h3>
+            </li>
+            <li th:each="allUser:${allUsers}" th:object="${allUser}">
+                <a th:class="*{username} != 'master' ? 'registratie' : 'none'"
+                   th:href="@{/profile/{id}(id=*{id})}"
+                   th:text="*{username}"></a>
+                <form th:if="${projectAuthority} == 'admin' and *{username} != 'master'"
+                      method="post" th:action="@{/profile/makeRequest}">
+                    <input th:class="remove" type="submit" th:value="#{add}">
+                    <input type="hidden" th:value="${project.projectId}" th:name="projectId">
+                    <input type="hidden" th:value="*{id}" th:name="id">
+                    <input type="hidden" th:value="true" th:name="invitation">
                 </form>
             </li>
         </ul>

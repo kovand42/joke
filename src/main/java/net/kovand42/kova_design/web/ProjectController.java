@@ -85,18 +85,36 @@ public class ProjectController {
         }
         List<User> notInvitedUsersWithLackingSkills = controllerFunctions.makeLackingSkillsUserList(project);
         notInvitedUsersWithLackingSkills.removeAll(invitedUsers);
+        List<User> allUsers = userService.findAll();
+        notInvitationRequests.forEach(request -> {
+            allUsers.remove(request.getUser());
+        });
+        invitationRequests.forEach(request -> {
+            allUsers.remove(request.getUser());
+        });
+        allUsers.removeAll(users);
+        allUsers.removeAll(notInvitedUsersWithLackingSkills);
         modelAndView.addObject("principal", principal)
+                .addObject("allUsersLength", allUsers.size())
+                .addObject("allUsers", allUsers)
+                .addObject("requestsLenght", notInvitationRequests.size())
                 .addObject("requests", notInvitationRequests)
                 .addObject("isUserInvited", isUserInvited)
+                .addObject("invitationRequestsLength", invitationRequests.size())
                 .addObject("invitationRequests", invitationRequests)
                 .addObject("user", user)
                 .addObject("project", project)
                 .addObject("users", users)
                 .addObject("projectAuthority", controllerFunctions.projectUserAuth(project, user))
                 .addObject("cont", cont)
+                .addObject("projectSkillsLength", controllerFunctions.makeProjectSkills(project).size())
                 .addObject("projectSkills", controllerFunctions.makeProjectSkills(project))
+                .addObject("lackingSkillsLength", controllerFunctions.lackingProjectSkills(project).size())
+                .addObject("lackingSkillsLength", controllerFunctions.lackingProjectSkills(project).size())
                 .addObject("lackingSkills", controllerFunctions.lackingProjectSkills(project))
+                .addObject("lackingUserSkillsLength", controllerFunctions.lackingUserSkills(project).size())
                 .addObject("lackingUserSkills", controllerFunctions.lackingUserSkills(project))
+                .addObject("usersWithLackingProjectSkillLength", notInvitedUsersWithLackingSkills.size())
                 .addObject("usersWithLackingProjectSkill", notInvitedUsersWithLackingSkills)
                 .addObject("messages", controllerFunctions.messages(project))
                 .addObject("messagesMap", controllerFunctions.userMessages(project, user))
