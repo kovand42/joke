@@ -17,7 +17,7 @@
             </a>
         </li>
     </ul>
-    <span th:if="${projectInvitMap} != null" th:class="container">
+    <span th:if="${projectInvitMapSize} > 0" th:class="container">
         <ul>
             <li>
                 <h3>Sent requests to users: </h3>
@@ -41,7 +41,7 @@
             </li>
         </ul>
     </span>
-    <span th:if="${projectApplyMap} != null" th:class="container">
+    <span th:if="${projectApplyMapSize} > 0" th:class="container">
         <ul>
             <li>
                 <h3>Sent requests to projects: </h3>

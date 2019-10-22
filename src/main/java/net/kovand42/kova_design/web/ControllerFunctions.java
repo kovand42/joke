@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,6 +33,8 @@ public class ControllerFunctions {
     ProjectAuthorityService projectAuthorityService;
     @Autowired
     ProjectMessageService projectMessageService;
+    @Autowired
+    RequestService requestService;
     public List<Skill> makeSkillListFromUserForProfile(User user){
         List<UserSkill> userSkills = userSkillService.findByUser(user);
         List<Skill> skills = new LinkedList<>();
@@ -277,5 +276,56 @@ public class ControllerFunctions {
         strB.append("redirect:/profile/").append(id);
         String redirectURL = strB.toString();
         return redirectURL;
+    }
+    public List<ProjectAuthority> makeProjectAuthorities(List<Project> projects){
+        List<ProjectAuthority> projectAuthorities = new LinkedList<>();
+        projects.forEach(project -> {
+            projectAuthorities.addAll(projectAuthorityService.findAllByProject(project));
+        });
+        return projectAuthorities;
+    }
+    public Set<Request> makeRequestSet(List<Project> projects, User user){
+        Set<Request> requests = new LinkedHashSet<>();
+        List<Project> allProjects = projectService.findAll();
+        allProjects.forEach(project -> {
+            requests.addAll(requestService.findByProjectAndUser(project, user));
+        });
+        return requests;
+    }
+    public List<Project> makeProjectListWithAdminAuth(List<ProjectAuthority> projectAuthorities, User user){
+        List<Project> projectsWithAdminAuth = new LinkedList<>();
+        projectAuthorities.forEach(projectAuthority -> {
+            if(projectAuthority.getUsersWithAuth().contains(user)&&
+                    projectAuthority.getProjectAuthority().equals("admin")){
+                projectsWithAdminAuth.add(projectAuthority.getProject());
+            }
+        });
+        return projectsWithAdminAuth;
+    }
+    public Map<Request, Boolean> makeInvitationRequestsMap(Set<Request> requests, List<Project> projects){
+        Map<Request, Boolean> projectInvitMap = new LinkedHashMap<>();
+        requests.forEach(request -> {
+            if(request.isInvitation()){
+                if(projects.contains(request.getProject())){
+                    projectInvitMap.put(request, true);
+                }else{
+                    projectInvitMap.put(request, false);
+                }
+            }
+        });
+        return projectInvitMap;
+    }
+    public Map<Request, Boolean> makeApplyRequestsMap(Set<Request> requests, List<Project> projects){
+        Map<Request, Boolean> projectInvitMap = new LinkedHashMap<>();
+        requests.forEach(request -> {
+            if(!request.isInvitation()){
+                if(projects.contains(request.getProject())){
+                    projectInvitMap.put(request, true);
+                }else{
+                    projectInvitMap.put(request, false);
+                }
+            }
+        });
+        return projectInvitMap;
     }
 }
