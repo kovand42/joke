@@ -9,10 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
@@ -36,22 +33,35 @@ public class ProfileController {
     @GetMapping("/{id}")
     ModelAndView profile(@PathVariable long id, Principal principal){
         User user = userService.findById(id).get();
+        User principalUser = userService.findByUsername(principal.getName()).get();
         List<Project> projects = controllerFunctions.makeProjectListFromUser(user);
         List<Skill> skills = controllerFunctions.makeSkillListFromUserForProfile(user);
-        List<Request> requests = new LinkedList<>();
+        Set<Request> requests = new LinkedHashSet<>();
         List<ProjectAuthority> projectAuthorities = new LinkedList<>();
         projects.forEach(project -> {
             requests.addAll(requestService.findByProjectAndUser(project, user));
             projectAuthorities.addAll(projectAuthorityService.findAllByProject(project));
         });
+        List<Project> principalProjects = controllerFunctions.makeProjectListFromUser(principalUser);
+        List<ProjectAuthority> principalProjectAuthorities = new LinkedList<>();
+        principalProjects.forEach(project -> {
+            principalProjectAuthorities.addAll(projectAuthorityService.findAllByProject(project));
+        });
         List<Project> userProjectsWithAdminAuth = new LinkedList<>();
+        List<Project> principalProjectsWithAdminAuth = new LinkedList<>();
         projectAuthorities.forEach(projectAuthority -> {
             if(projectAuthority.getUsersWithAuth().contains(user)&&
                     projectAuthority.getProjectAuthority().equals("admin")){
                 userProjectsWithAdminAuth.add(projectAuthority.getProject());
             }
         });
-        System.out.println(userProjectsWithAdminAuth.size());
+        principalProjectAuthorities.forEach(projectAuthority -> {
+            if(projectAuthority.getUsersWithAuth().contains(principalUser)&&
+            projectAuthority.getProjectAuthority().equals("admin")){
+                principalProjectsWithAdminAuth.add(projectAuthority.getProject());
+            }
+        });
+        System.out.println(principalProjectsWithAdminAuth.size());
         userProjectsWithAdminAuth.forEach(project -> {
             requests.addAll(requestService.findByProject(project));
         });
@@ -60,17 +70,32 @@ public class ProfileController {
         List<Request> invitationRequests = new LinkedList<>();
         List<Project> allProjects = projectService.findAll();
         allProjects.forEach(project -> {
-            applyRequests.addAll(requestService.findByProjectAndUser(project, user));
+            requests.addAll(requestService.findByProjectAndUser(project, user));
         });
+        Map<Request, Boolean> projectInvitMap = new LinkedHashMap<>();
+        Map<Request, Boolean> projectApplyMap = new LinkedHashMap<>();
         requests.forEach(request -> {
             if(request.isInvitation()){
                 invitationRequests.add(request);
+                applyRequests.remove(request);
+                if(principalProjectsWithAdminAuth.contains(request.getProject())){
+                    projectInvitMap.put(request, true);
+                }else{
+                    projectInvitMap.put(request, false);
+                }
             }else{
                 applyRequests.add(request);
+                if(principalProjectsWithAdminAuth.contains(request.getProject())){
+                    projectApplyMap.put(request, true);
+                }else {
+                    projectApplyMap.put(request, false);
+                }
             }
         });
         ModelAndView modelAndView = new ModelAndView("profile")
                 .addObject("user", userService.findById(id).get());
+        modelAndView.addObject("projectInvitMap", projectInvitMap);
+        modelAndView.addObject("projectApplyMap", projectApplyMap);
         modelAndView.addObject("applyRequests", applyRequests);
         modelAndView.addObject("requests", invitationRequests);
         modelAndView.addObject("skills", skills);

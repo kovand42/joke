@@ -78,6 +78,20 @@ public class Project implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Project)) return false;
+        Project project = (Project) o;
+        return getProjectId() == project.getProjectId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getProjectId());
+    }
+
+    /*
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Project)) return false;
         Project that = (Project) o;
         return getRepository().equals(that.getRepository()) &&
                 getProjectName().equalsIgnoreCase(that.getProjectName());
@@ -87,6 +101,7 @@ public class Project implements Serializable {
     public int hashCode() {
         return Objects.hash(getProjectName(), getRepository());
     }
+*/
 
     @Override
     public String toString() {

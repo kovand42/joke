@@ -12,7 +12,8 @@ import java.util.Set;
 @Entity
 @Table(name = "projectauthorities")
 @NamedEntityGraph(name = ProjectAuthority.WITH_USERS,
-        attributeNodes = {@NamedAttributeNode("usersWithAuth")})
+        attributeNodes = {@NamedAttributeNode("usersWithAuth"),
+                @NamedAttributeNode("project")})
 public class ProjectAuthority implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final String WITH_USERS="ProjectAuthority.withUsers";
