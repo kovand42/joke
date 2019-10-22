@@ -164,22 +164,31 @@ public class ProfileController {
             }
         });
         if(projectUsers.get()>0){
-            List<User> users = controllerFunctions.makeProjectUserList(project);
-            users.remove(user);
-            User nambatooTemporaire = users.get(0);
-            User nambatoo = userService.findByUsername(nambatooTemporaire.getUsername()).get();
-            ProjectAuthority projectAuthority1 = projectAuthorityService.findByProjectAndAuthority(project, "user").get();
-            projectAuthority1.removeUser(nambatoo);
-            nambatoo.removeProjectAuthority(projectAuthority1);
-            user.removeProjectAuthority(projectAuthority);
-            nambatoo.addProjectAuthority(projectAuthority);
-            userSkills.forEach(userSkill -> {
-                project.remove(userSkill);
-            });
-            userService.update(user);
-            userService.update(nambatoo);
-            projectAuthorityService.update(projectAuthority);
-            projectAuthorityService.update(projectAuthority1);
+            if(user.getProjectAuthorities().contains(projectAuthority)){
+                List<User> users = controllerFunctions.makeProjectUserList(project);
+                users.remove(user);
+                User nambatooTemporaire = users.get(0);
+                User nambatoo = userService.findByUsername(nambatooTemporaire.getUsername()).get();
+                ProjectAuthority projectAuthority1 = projectAuthorityService.findByProjectAndAuthority(project, "user").get();
+                projectAuthority1.removeUser(nambatoo);
+                nambatoo.removeProjectAuthority(projectAuthority1);
+                user.removeProjectAuthority(projectAuthority);
+                nambatoo.addProjectAuthority(projectAuthority);
+                userSkills.forEach(userSkill -> {
+                    project.remove(userSkill);
+                });
+                userService.update(user);
+                userService.update(nambatoo);
+                projectAuthorityService.update(projectAuthority);
+                projectAuthorityService.update(projectAuthority1);
+            }else {
+                ProjectAuthority projectAuthority1 = projectAuthorityService.findByProjectAndAuthority(project, "user").get();
+                user.removeProjectAuthority(projectAuthority1);
+                projectAuthority1.removeUser(user);
+                userService.update(user);
+                projectAuthorityService.update(projectAuthority1);
+            }
+
             projectService.update(project);
             redirect.addAttribute("id", id);
             return new ModelAndView("redirect:/profile/addProjects");
