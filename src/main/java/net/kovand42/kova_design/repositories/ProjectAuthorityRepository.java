@@ -17,5 +17,5 @@ public interface ProjectAuthorityRepository extends JpaRepository<ProjectAuthori
     @EntityGraph(ProjectAuthority.WITH_USERS)
     List<ProjectAuthority> findProjectAuthoritiesByProjectOrderByProjectAuthorityId(Project project);
     @EntityGraph(ProjectAuthority.WITH_USERS)
-    List<ProjectAuthority> findProjectAuthoritiesByProjectAndProjectAuthorityOrderByProjectAuthorityId(Project project, String authority);
+    Optional<ProjectAuthority> findProjectAuthoritiesByProjectAndProjectAuthorityOrderByProjectAuthorityId(Project project, String authority);
 }

@@ -328,4 +328,7 @@ public class ControllerFunctions {
         });
         return projectInvitMap;
     }
+    public void deleteRequest(Project project, User user){
+        requestService.delete(requestService.findByProjectAndUser(project, user).get(0));
+    }
 }

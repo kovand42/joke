@@ -31,7 +31,7 @@ public class JpaProjectAuthorityService implements ProjectAuthorityService{
     }
 
     @Override
-    public List<ProjectAuthority> findByProjectAndAuthority(Project project, String authority) {
+    public Optional<ProjectAuthority> findByProjectAndAuthority(Project project, String authority) {
         return projectAuthorityRepository
                 .findProjectAuthoritiesByProjectAndProjectAuthorityOrderByProjectAuthorityId(project, authority);
     }

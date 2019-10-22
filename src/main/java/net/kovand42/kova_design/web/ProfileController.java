@@ -110,7 +110,8 @@ public class ProfileController {
                                    RedirectAttributes redirect, Principal principal){
             Project project = projectService.findById(projectId).get();
             User user = userService.findById(id).get();
-        requestService.delete(requestService.findByProjectAndUser(project, user).get(0));
+        controllerFunctions.deleteRequest(project, user);
+            //requestService.delete(requestService.findByProjectAndUser(project, user).get(0));
         long principalId = userService.findByUsername(principal.getName()).get().getId();
         StringBuilder strB = new StringBuilder();
         strB.append("redirect:/profile/").append(principalId);
@@ -139,7 +140,8 @@ public class ProfileController {
             project.add(userSkill);
         });
         projectService.update(project);
-        requestService.delete(requestService.findByProjectAndUser(project, user).get(0));
+        controllerFunctions.deleteRequest(project, user);
+        //requestService.delete(requestService.findByProjectAndUser(project, user).get(0));
         long principalId = userService.findByUsername(principal.getName()).get().getId();
         StringBuilder strB = new StringBuilder();
         strB.append("redirect:/profile/").append(principalId);
@@ -152,6 +154,8 @@ public class ProfileController {
         User user = userService.findById(id).get();
         List<UserSkill> userSkills = userSkillService.findByUser(user);
         Project project = projectService.findById(projectId).get();
+        ProjectAuthority projectAuthority = projectAuthorityService
+                .findByProjectAndAuthority(project, "admin").get();
         AtomicInteger projectUsers = new AtomicInteger(0);
         project.getUserSkills().stream().forEach(userSkill -> {
             if(!(userSkill.getUser().equals(user))
@@ -160,9 +164,22 @@ public class ProfileController {
             }
         });
         if(projectUsers.get()>0){
+            List<User> users = controllerFunctions.makeProjectUserList(project);
+            users.remove(user);
+            User nambatooTemporaire = users.get(0);
+            User nambatoo = userService.findByUsername(nambatooTemporaire.getUsername()).get();
+            ProjectAuthority projectAuthority1 = projectAuthorityService.findByProjectAndAuthority(project, "user").get();
+            projectAuthority1.removeUser(nambatoo);
+            nambatoo.removeProjectAuthority(projectAuthority1);
+            user.removeProjectAuthority(projectAuthority);
+            nambatoo.addProjectAuthority(projectAuthority);
             userSkills.forEach(userSkill -> {
                 project.remove(userSkill);
             });
+            userService.update(user);
+            userService.update(nambatoo);
+            projectAuthorityService.update(projectAuthority);
+            projectAuthorityService.update(projectAuthority1);
             projectService.update(project);
             redirect.addAttribute("id", id);
             return new ModelAndView("redirect:/profile/addProjects");
@@ -176,12 +193,9 @@ public class ProfileController {
     ModelAndView deleteProject(@RequestParam("id") long id,
                                    @RequestParam("projectId") long projectId,
                                    RedirectAttributes redirect){
-        /*redirect.addAttribute("id", id);*/
+
         Project project = projectService.findById(projectId).get();
         controllerFunctions.deleteProject(project);
-        //projectService.delete(project);
-/*        StringBuilder strb = new StringBuilder();
-        strb.append("redirect:/profile/").append(id);*/
         return new ModelAndView(controllerFunctions.redirectToProfileAfterDeleteProject(id));
     }
 }

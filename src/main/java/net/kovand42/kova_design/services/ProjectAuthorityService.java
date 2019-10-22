@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface ProjectAuthorityService {
     List<ProjectAuthority> findAll();
     List<ProjectAuthority> findAllByProject(Project project);
-    List<ProjectAuthority> findByProjectAndAuthority(Project project, String authority);
+    Optional<ProjectAuthority> findByProjectAndAuthority(Project project, String authority);
     Optional<ProjectAuthority> findById(long id);
     void create(ProjectAuthority projectAuthority);
     void delete(ProjectAuthority projectAuthority);
