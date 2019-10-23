@@ -202,8 +202,13 @@ public class ProfileController {
     ModelAndView deleteProject(@RequestParam("id") long id,
                                    @RequestParam("projectId") long projectId,
                                    RedirectAttributes redirect){
-
         Project project = projectService.findById(projectId).get();
+        ProjectAuthority projectAuthority = projectAuthorityService.findByProjectAndAuthority(project, "admin").get();
+        User user = userService.findById(id).get();
+        projectAuthority.removeUser(user);
+        user.removeProjectAuthority(projectAuthority);
+        projectAuthorityService.update(projectAuthority);
+        userService.update(user);
         controllerFunctions.deleteProject(project);
         return new ModelAndView(controllerFunctions.redirectToProfileAfterDeleteProject(id));
     }
