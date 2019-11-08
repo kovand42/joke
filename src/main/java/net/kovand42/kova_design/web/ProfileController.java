@@ -188,7 +188,6 @@ public class ProfileController {
                 userService.update(user);
                 projectAuthorityService.update(projectAuthority1);
             }
-
             projectService.update(project);
             redirect.addAttribute("id", id);
             return new ModelAndView("redirect:/profile/addProjects");
